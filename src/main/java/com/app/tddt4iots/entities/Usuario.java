@@ -1,6 +1,7 @@
 package com.app.tddt4iots.entities;
  
 import com.app.tddt4iots.enums.*;
+import jakarta.persistence.*;
 import lombok.Data;
  import lombok.NoArgsConstructor;
  

@@ -1,36 +1,40 @@
 package com.app.tddt4iots.entities;
  
 import com.app.tddt4iots.enums.*;
+import jakarta.persistence.*;
 import lombok.Data;
  import lombok.NoArgsConstructor;
  
 import javax.persistence.*;
  import java.util.ArrayList;
-import java.util.ArrayList;
-import java.util.ArrayList;
  
 @Entity
- @Table(name = "Chofer")
+ @Table(name = "fotovehiculo")
  @Data
  @NoArgsConstructor
- public class Chofer {
+ public class Fotovehiculo {
      
     @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
      private Long id;
      
-   @OneToMany(mappedBy = "id") 
+    @Column(name = "url", nullable = true, unique = false, length = 30) 
+    private String url; 
+ 
+    @Column(name = "nombre", nullable = true, unique = false, length = 30) 
+    private String nombre; 
+ 
+    @Column(name = "descripcion", nullable = false, unique = false, length = 30) 
+    private String descripcion; 
+ 
+    @Column(name = "fechacreacion", nullable = true, unique = false) 
+    private String fechacreacion; 
+ 
+    @Column(name = "fechamodificacion", nullable = true, unique = false) 
+    private String fechamodificacion; 
+ 
+   @OneToMany(mappedBy = "fotovehiculo")
     private ArrayList<Vehiculo> vehiculo; 
- 
-   @JoinColumn(name = "id", referencedColumnName = "id") 
-   @OneToOne 
-    private Usuario usuario; 
- 
-   @OneToMany(mappedBy = "id") 
-    private ArrayList<Fotochofer> fotochofer; 
- 
-   @OneToMany(mappedBy = "id") 
-    private ArrayList<Registro> registro; 
  
     
     @Override
@@ -44,10 +48,10 @@ import java.util.ArrayList;
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Chofer)) {
+        if (!(object instanceof Fotovehiculo)) {
             return false;
         }
-        Chofer other = (Chofer) object;
+        Fotovehiculo other = (Fotovehiculo) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -56,6 +60,6 @@ import java.util.ArrayList;
     
     @Override
     public String toString() {
-        return "com.app.tddt4iots.entities.Chofer[ id=" + id + " ]";
+        return "com.app.tddt4iots.entities.Fotovehiculo[ id=" + id + " ]";
     }
 }    

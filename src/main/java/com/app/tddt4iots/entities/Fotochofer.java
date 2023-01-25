@@ -1,30 +1,34 @@
 package com.app.tddt4iots.entities;
  
 import com.app.tddt4iots.enums.*;
+import jakarta.persistence.*;
 import lombok.Data;
  import lombok.NoArgsConstructor;
  
 import javax.persistence.*;
-  
+ import java.util.ArrayList;
+ 
 @Entity
- @Table(name = "Guardia")
+ @Table(name = "fotochofer")
  @Data
  @NoArgsConstructor
- public class Guardia {
+ public class Fotochofer {
      
     @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
      private Long id;
      
-    @Column(name = "empresa", nullable = true, unique = false, length = 30) 
-    private String empresa; 
+    @Column(name = "url", nullable = true, unique = false, length = 30) 
+    private String url; 
  
-    @Column(name = "usuario", nullable = false, unique = false, length = 30) 
-    private String usuario; 
+    @Column(name = "nombre", nullable = true, unique = false, length = 30) 
+    private String nombre; 
  
-   @JoinColumn(name = "id", referencedColumnName = "id") 
-   @OneToOne 
-    private Usuario usuario; 
+    @Column(name = "descripcion", nullable = false, unique = false, length = 30) 
+    private String descripcion; 
+ 
+   @OneToMany(mappedBy = "id") 
+    private ArrayList<Chofer> chofer; 
  
     
     @Override
@@ -38,10 +42,10 @@ import javax.persistence.*;
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Guardia)) {
+        if (!(object instanceof Fotochofer)) {
             return false;
         }
-        Guardia other = (Guardia) object;
+        Fotochofer other = (Fotochofer) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -50,6 +54,6 @@ import javax.persistence.*;
     
     @Override
     public String toString() {
-        return "com.app.tddt4iots.entities.Guardia[ id=" + id + " ]";
+        return "com.app.tddt4iots.entities.Fotochofer[ id=" + id + " ]";
     }
 }    

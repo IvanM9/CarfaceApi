@@ -1,33 +1,37 @@
 package com.app.tddt4iots.entities;
  
 import com.app.tddt4iots.enums.*;
+import jakarta.persistence.*;
 import lombok.Data;
  import lombok.NoArgsConstructor;
  
 import javax.persistence.*;
  import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.ArrayList;
  
 @Entity
- @Table(name = "Fotochofer")
+ @Table(name = "chofer")
  @Data
  @NoArgsConstructor
- public class Fotochofer {
+ public class Chofer {
      
     @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
      private Long id;
      
-    @Column(name = "url", nullable = true, unique = false, length = 30) 
-    private String url; 
+   @OneToMany(mappedBy = "chofer")
+    private ArrayList<Vehiculo> vehiculo; 
  
-    @Column(name = "nombre", nullable = true, unique = false, length = 30) 
-    private String nombre; 
+   @JoinColumn(name = "chofer", referencedColumnName = "id")
+   @OneToOne 
+    private Usuario usuario; 
  
-    @Column(name = "descripcion", nullable = false, unique = false, length = 30) 
-    private String descripcion; 
+   @OneToMany(mappedBy = "chofer")
+    private ArrayList<Fotochofer> fotochofer; 
  
-   @OneToMany(mappedBy = "id") 
-    private ArrayList<Chofer> chofer; 
+   @OneToMany(mappedBy = "chofer")
+    private ArrayList<Registro> registro; 
  
     
     @Override
@@ -41,10 +45,10 @@ import javax.persistence.*;
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Fotochofer)) {
+        if (!(object instanceof Chofer)) {
             return false;
         }
-        Fotochofer other = (Fotochofer) object;
+        Chofer other = (Chofer) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -53,6 +57,6 @@ import javax.persistence.*;
     
     @Override
     public String toString() {
-        return "com.app.tddt4iots.entities.Fotochofer[ id=" + id + " ]";
+        return "com.app.tddt4iots.entities.Chofer[ id=" + id + " ]";
     }
 }    

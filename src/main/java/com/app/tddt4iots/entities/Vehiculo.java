@@ -1,34 +1,48 @@
 package com.app.tddt4iots.entities;
  
 import com.app.tddt4iots.enums.*;
+import jakarta.persistence.*;
 import lombok.Data;
  import lombok.NoArgsConstructor;
  
 import javax.persistence.*;
  import java.util.ArrayList;
 import java.util.ArrayList;
+import java.util.ArrayList;
  
 @Entity
- @Table(name = "Registro")
+ @Table(name = "vehiculo")
  @Data
  @NoArgsConstructor
- public class Registro {
+ public class Vehiculo {
      
     @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
      private Long id;
      
-    @Column(name = "fecha", nullable = true, unique = false) 
-    private String fecha; 
+    @Column(name = "placa", nullable = true, unique = false, length = 30) 
+    private String placa; 
  
-    @Column(name = "observaciones", nullable = false, unique = false, length = 30) 
-    private String observaciones; 
+    @Column(name = "marca", nullable = true, unique = false, length = 30) 
+    private String marca; 
  
-   @OneToMany(mappedBy = "id") 
+    @Column(name = "modelo", nullable = true, unique = false, length = 30) 
+    private String modelo; 
+ 
+    @Column(name = "color", nullable = true, unique = false, length = 30) 
+    private String color; 
+ 
+    @Column(name = "anio", nullable = false, unique = false, length = 30) 
+    private String anio; 
+ 
+   @OneToMany(mappedBy = "vehiculo")
     private ArrayList<Chofer> chofer; 
  
-   @OneToMany(mappedBy = "id") 
-    private ArrayList<Vehiculo> vehiculo; 
+   @OneToMany(mappedBy = "vehiculo")
+    private ArrayList<Fotovehiculo> fotovehiculo; 
+ 
+   @OneToMany(mappedBy = "vehiculo")
+    private ArrayList<Registro> registro; 
  
     
     @Override
@@ -42,10 +56,10 @@ import java.util.ArrayList;
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Registro)) {
+        if (!(object instanceof Vehiculo)) {
             return false;
         }
-        Registro other = (Registro) object;
+        Vehiculo other = (Vehiculo) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -54,6 +68,6 @@ import java.util.ArrayList;
     
     @Override
     public String toString() {
-        return "com.app.tddt4iots.entities.Registro[ id=" + id + " ]";
+        return "com.app.tddt4iots.entities.Vehiculo[ id=" + id + " ]";
     }
 }    

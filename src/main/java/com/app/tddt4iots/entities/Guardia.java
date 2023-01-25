@@ -1,39 +1,31 @@
 package com.app.tddt4iots.entities;
  
 import com.app.tddt4iots.enums.*;
+import jakarta.persistence.*;
 import lombok.Data;
  import lombok.NoArgsConstructor;
  
 import javax.persistence.*;
- import java.util.ArrayList;
- 
+  
 @Entity
- @Table(name = "Fotovehiculo")
+ @Table(name = "guardia")
  @Data
  @NoArgsConstructor
- public class Fotovehiculo {
+ public class Guardia {
      
     @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
      private Long id;
      
-    @Column(name = "url", nullable = true, unique = false, length = 30) 
-    private String url; 
+    @Column(name = "empresa", nullable = true, unique = false, length = 30) 
+    private String empresa; 
  
-    @Column(name = "nombre", nullable = true, unique = false, length = 30) 
-    private String nombre; 
+    @Column(name = "usuario", nullable = false, unique = false, length = 30) 
+    private String usuario; 
  
-    @Column(name = "descripcion", nullable = false, unique = false, length = 30) 
-    private String descripcion; 
- 
-    @Column(name = "fechacreacion", nullable = true, unique = false) 
-    private String fechacreacion; 
- 
-    @Column(name = "fechamodificacion", nullable = true, unique = false) 
-    private String fechamodificacion; 
- 
-   @OneToMany(mappedBy = "id") 
-    private ArrayList<Vehiculo> vehiculo; 
+   @JoinColumn(name = "guardia", referencedColumnName = "id")
+   @OneToOne 
+    private Usuario usuario; 
  
     
     @Override
@@ -47,10 +39,10 @@ import javax.persistence.*;
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Fotovehiculo)) {
+        if (!(object instanceof Guardia)) {
             return false;
         }
-        Fotovehiculo other = (Fotovehiculo) object;
+        Guardia other = (Guardia) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -59,6 +51,6 @@ import javax.persistence.*;
     
     @Override
     public String toString() {
-        return "com.app.tddt4iots.entities.Fotovehiculo[ id=" + id + " ]";
+        return "com.app.tddt4iots.entities.Guardia[ id=" + id + " ]";
     }
 }    
