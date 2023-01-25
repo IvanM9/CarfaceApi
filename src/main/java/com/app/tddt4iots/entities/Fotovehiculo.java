@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
  import lombok.NoArgsConstructor;
  
-import javax.persistence.*;
- import java.util.ArrayList;
+
  
 @Entity
  @Table(name = "fotovehiculo")
@@ -33,8 +32,8 @@ import javax.persistence.*;
     @Column(name = "fechamodificacion", nullable = true, unique = false) 
     private String fechamodificacion; 
  
-   @OneToMany(mappedBy = "fotovehiculo")
-    private ArrayList<Vehiculo> vehiculo; 
+   @ManyToOne()
+    private Vehiculo vehiculo;
  
     
     @Override

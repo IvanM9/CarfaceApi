@@ -4,10 +4,7 @@ import com.app.tddt4iots.enums.*;
 import jakarta.persistence.*;
 import lombok.Data;
  import lombok.NoArgsConstructor;
- 
-import javax.persistence.*;
- import java.util.ArrayList;
-import java.util.ArrayList;
+
  
 @Entity
  @Table(name = "registro")
@@ -25,11 +22,11 @@ import java.util.ArrayList;
     @Column(name = "observaciones", nullable = false, unique = false, length = 30) 
     private String observaciones; 
  
-   @OneToMany(mappedBy = "registro")
-    private ArrayList<Chofer> chofer; 
+   @ManyToOne()
+    private Chofer chofer;
  
-   @OneToMany(mappedBy = "registro")
-    private ArrayList<Vehiculo> vehiculo; 
+   @ManyToOne()
+    private Vehiculo vehiculo;
  
     
     @Override
