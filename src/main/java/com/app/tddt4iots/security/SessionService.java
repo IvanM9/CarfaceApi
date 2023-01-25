@@ -28,7 +28,7 @@ public class SessionService {
 
     public String login(String correo, String clave) {
         try {
-            Usuario respuesta = usuario.findOneUsuarioByCorreo(correo).orElseThrow();
+            Usuario respuesta = usuario.findOneByCorreo(correo).orElseThrow();
             System.out.println(respuesta);
             if (respuesta == null)
                 return null;
@@ -42,7 +42,7 @@ public class SessionService {
             datosToken.setRol(respuesta.getRol());
             return jwtTokenService.generateToken(
                     datosToken
-                    ,respuesta.getRol() == Rol.Chofer);
+                    ,respuesta.getRol() == Rol.CHOFER);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;

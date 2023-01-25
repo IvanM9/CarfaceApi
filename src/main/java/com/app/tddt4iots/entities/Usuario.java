@@ -1,6 +1,7 @@
 package com.app.tddt4iots.entities;
 
 import com.app.tddt4iots.enums.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "Usuario")
+@Table(name = "usuario")
 @Data
 @NoArgsConstructor
 public class Usuario {
@@ -18,43 +19,45 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "nombres", nullable = true, unique = false, length = 30)
+    @Column(name = "nombres", nullable = false, unique = false, length = 30)
     private String nombres;
 
-    @Column(name = "apellidos", nullable = true, unique = false, length = 30)
+    @Column(name = "apellidos", nullable = false, unique = false, length = 30)
     private String apellidos;
 
-    @Column(name = "cedula", nullable = true, unique = false, length = 30)
+    @Column(name = "cedula", nullable = false, unique = false, length = 10)
     private String cedula;
 
-    @Column(name = "telefono", nullable = false, unique = false, length = 30)
+    @Column(name = "telefono", nullable = true, unique = false, length = 10)
     private String telefono;
 
-    @Column(name = "direccion", nullable = false, unique = false, length = 30)
+    @Column(name = "direccion", nullable = true, unique = false, length = 30)
     private String direccion;
 
-    @Column(name = "correo", nullable = true, unique = false, length = 30)
+    @Column(name = "correo", nullable = false, unique = false, length = 50, updatable = false)
     private String correo;
 
-    @Column(name = "clave", nullable = true, unique = false, length = 30)
+    @Column(name = "clave", nullable = false, unique = false)
     private String clave;
 
-    @Column(name = "fechacreacion", nullable = true, unique = false)
+    @Column(name = "fechacreacion", nullable = false, unique = false, updatable = false)
     private Date fechacreacion;
 
-    @Column(name = "fechamodificacion", nullable = true, unique = false, length = 30)
+    @Column(name = "fechamodificacion", nullable = false, unique = false)
     private Date fechamodificacion;
 
-    @JoinColumn(name = "id", referencedColumnName = "id")
-    @OneToOne
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Chofer chofer;
 
-    @JoinColumn(name = "id", referencedColumnName = "id") //TODO: Cambiar el joincolum al objeto destino
-    @OneToOne
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Guardia guardia;
 
 
-    @Column()
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol", nullable = false, updatable = false)
     private Rol rol;
 
     @Override

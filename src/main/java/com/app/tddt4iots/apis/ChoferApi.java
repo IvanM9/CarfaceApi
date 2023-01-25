@@ -1,11 +1,18 @@
 package com.app.tddt4iots.apis;
 
+import com.app.tddt4iots.dtos.choferdto.CreateChoferDto;
 import com.app.tddt4iots.entities.Chofer;
 import com.app.tddt4iots.dao.ChoferDao;
+import com.app.tddt4iots.entities.Usuario;
+import com.app.tddt4iots.enums.Rol;
+import com.app.tddt4iots.security.JwtTokenService;
+import com.app.tddt4iots.service.ChoferService.ChoferServiceImplement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,16 +22,25 @@ public class ChoferApi {
 
     @Autowired
     private ChoferDao choferDAO;
+    @Autowired
+    ChoferServiceImplement servicio;
+
+    @Autowired
+    JwtTokenService jwtTokenService;
 
     @GetMapping
-    public ResponseEntity<List<Chofer>> getChofer() {
+    public ResponseEntity<?> getChofer(@RequestHeader String Authorization) {
+        ArrayList<Rol> rol = new ArrayList<>();
+        rol.add(Rol.ADMINISTRADOR);
+        if(jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
+            return new ResponseEntity<>("Usuario no autorizado", HttpStatus.FORBIDDEN);
         List<Chofer> listChofer = choferDAO.findAll();
         return ResponseEntity.ok(listChofer);
     }
 
     @PostMapping
-    public ResponseEntity<Chofer> insertChofer(@RequestBody Chofer chofer) {
-        Chofer newChofer = choferDAO.save(chofer);
+    public ResponseEntity<?> insertChofer(@RequestBody CreateChoferDto chofer) {
+        Usuario newChofer = servicio.saveChofer(chofer);
         return ResponseEntity.ok(newChofer);
     }
 

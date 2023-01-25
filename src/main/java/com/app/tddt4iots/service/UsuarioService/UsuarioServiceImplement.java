@@ -8,7 +8,6 @@ import com.app.tddt4iots.entities.Usuario;
 import com.app.tddt4iots.enums.Rol;
 import com.septimo.carface.carface.dtos.usuariodto.PutUserDto;
 
-import com.septimo.carface.carface.util.FileUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,7 @@ public class UsuarioServiceImplement implements UsuarioService {
     public JSONObject getUsuarioByEmail(String correo) {
         JSONObject object = new JSONObject();
         try {
-            Usuario chofer = repository.findOneUsuarioByCorreo(correo).orElseThrow();
+            Usuario chofer = repository.findOneByCorreo(correo).orElseThrow();
             object.put("nombre", chofer.getNombres());
             object.put("apellido", chofer.getApellidos());
             object.put("ci", chofer.getCedula());
@@ -53,7 +52,7 @@ public class UsuarioServiceImplement implements UsuarioService {
 
     @Override
     public Usuario saveUsuario(CreateUserDto usuario) {
-        return repository.save(createUsuario(usuario, Rol.Chofer));
+        return repository.save(createUsuario(usuario, Rol.CHOFER));
     }
 
     @Override
@@ -70,13 +69,15 @@ public class UsuarioServiceImplement implements UsuarioService {
 
     @Override
     public Boolean updloadPhoto(MultipartFile[] files) {
+        // TODO: Método para subir fotos a la nube
         try {
             AtomicReference<Boolean> success = new AtomicReference<>(false);
             String localPath = Paths.get("").toAbsolutePath().toString() +
                     "/src/main/resources/static/images";
             ArrayList<String> fileNames = new ArrayList<>();
             Arrays.asList(files).stream().forEach(file -> {
-                success.set(FileUtils.upload(file, localPath, file.getOriginalFilename()));
+                //success.set(FileUtils.upload(file, localPath, file.getOriginalFilename()));
+                success.set(true);
             });
             return success.get();
         } catch (Exception e) {
@@ -91,7 +92,9 @@ public class UsuarioServiceImplement implements UsuarioService {
         usuario.setClave(usuario1.clave);
         usuario.setNombres(usuario1.nombre);
         usuario.setApellidos(usuario1.apellido);
-        //usuario.(rol); TODO: Asignar rol a usuario
+        usuario.setDireccion(usuario1.getDireccion());
+        usuario.setTelefono(usuario1.getTelefono());
+        usuario.setRol(rol);
         Timestamp timestamp = new Timestamp(new Date().getTime());
         usuario.setFechacreacion(timestamp);
         usuario.setFechamodificacion(timestamp);

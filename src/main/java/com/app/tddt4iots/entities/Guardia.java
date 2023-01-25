@@ -1,6 +1,7 @@
 package com.app.tddt4iots.entities;
 
 import com.app.tddt4iots.enums.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,15 +14,18 @@ import lombok.NoArgsConstructor;
 public class Guardia {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "empresa", nullable = true, unique = false, length = 30)
+    @Column(name = "empresa", nullable = false, unique = false, length = 30)
     private String empresa;
 
+    @Column(name = "estado", nullable = false)
+    private Boolean estado;
 
-    @JoinColumn(name = "guardia", referencedColumnName = "id")
+
+    @MapsId
     @OneToOne
+    @JsonBackReference
     private Usuario usuario;
 
 

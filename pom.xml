@@ -8,7 +8,7 @@
 		<version>3.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.septimo.carface</groupId>
+	<groupId>com.app.tddt4iots</groupId>
 	<artifactId>carface</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>carface</name>
@@ -134,6 +134,11 @@
 				</dependencies>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 	</build>
 
 </project>

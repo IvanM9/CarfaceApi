@@ -1,6 +1,8 @@
 package com.app.tddt4iots.entities;
 
 import com.app.tddt4iots.enums.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "vehiculo")
@@ -20,29 +23,37 @@ public class Vehiculo {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "placa", nullable = true, unique = false, length = 30)
+    @Column(name = "tipo_vehiculo", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TipoVehiculo tipoVehiculo;
+
+    @Column(name = "placa", nullable = false, unique = false, length = 15)
     private String placa;
 
-    @Column(name = "marca", nullable = true, unique = false, length = 30)
+    @Column(name = "marca", nullable = false, unique = false, length = 30)
     private String marca;
 
     @Column(name = "modelo", nullable = true, unique = false, length = 30)
     private String modelo;
 
-    @Column(name = "color", nullable = true, unique = false, length = 30)
+    @Column(name = "color", nullable = false, unique = false, length = 30)
     private String color;
 
-    @Column(name = "anio", nullable = false, unique = false, length = 30)
+    @Column(name = "anio", nullable = true, unique = false, length = 30)
     private String anio;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "chofer_id")
+    @JsonBackReference
     private Chofer chofer;
 
-    @OneToMany(mappedBy = "vehiculo")
-    private ArrayList<Fotovehiculo> fotovehiculo;
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Fotovehiculo> fotovehiculo;
 
-    @OneToMany(mappedBy = "vehiculo")
-    private ArrayList<Registro> registro;
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Registro> registro;
 
 
     @Override

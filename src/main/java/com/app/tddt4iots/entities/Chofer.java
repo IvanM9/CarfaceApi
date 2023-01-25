@@ -1,6 +1,8 @@
 package com.app.tddt4iots.entities;
 
 import com.app.tddt4iots.enums.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,29 +11,36 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "chofer")
-@Data
 @NoArgsConstructor
 public class Chofer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "chofer")
-    private ArrayList<Vehiculo> vehiculo;
+    @Column(nullable = false, name = "licencia")
+    @Enumerated(EnumType.STRING)
+    private TipoLicencia licencia;
 
-    @JoinColumn(name = "chofer", referencedColumnName = "id")
-    @OneToOne
+    @OneToMany(mappedBy = "chofer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Vehiculo> vehiculo;
+
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "chofer")
-    private ArrayList<Fotochofer> fotochofer;
+    @OneToMany(mappedBy = "chofer",  cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Fotochofer> fotochofer;
 
-    @OneToMany(mappedBy = "chofer")
-    private ArrayList<Registro> registro;
+    @OneToMany(mappedBy = "chofer",  cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Registro> registro;
 
 
     @Override
@@ -59,4 +68,44 @@ public class Chofer {
     public String toString() {
         return "com.app.tddt4iots.entities.Chofer[ id=" + id + " ]";
     }
-}    
+
+    public TipoLicencia getLicencia() {
+        return licencia;
+    }
+
+    public void setLicencia(TipoLicencia licencia) {
+        this.licencia = licencia;
+    }
+
+    public List<Vehiculo> getVehiculo() {
+        return vehiculo;
+    }
+
+    public void setVehiculo(ArrayList<Vehiculo> vehiculo) {
+        this.vehiculo = vehiculo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public List<Fotochofer> getFotochofer() {
+        return fotochofer;
+    }
+
+    public void setFotochofer(ArrayList<Fotochofer> fotochofer) {
+        this.fotochofer = fotochofer;
+    }
+
+    public List<Registro> getRegistro() {
+        return registro;
+    }
+
+    public void setRegistro(ArrayList<Registro> registro) {
+        this.registro = registro;
+    }
+}

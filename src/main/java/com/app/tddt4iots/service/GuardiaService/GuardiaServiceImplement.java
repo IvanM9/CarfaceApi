@@ -45,9 +45,9 @@ public class GuardiaServiceImplement implements GuardiaService {
         guardia.setEmpresa(datos.getFecha_inicio());
         guardia.setEmpresa(datos.getFecha_fin());
 
-        Usuario user = usuarioServiceImplement.createUsuario(usuario, Rol.Guardia);
+        Usuario user = usuarioServiceImplement.createUsuario(usuario, Rol.GUARDIA);
         guardia.setUsuario(user);
-        //guardia.set(true); TODO:  asignar un estado para saber si sigue en el trabajo o no
+        guardia.setEstado(true);
         user.setGuardia(guardia);
         System.out.println(guardia);
         return usuarioRepository.save(user);

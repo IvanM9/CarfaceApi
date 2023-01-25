@@ -1,6 +1,7 @@
 package com.app.tddt4iots.entities;
 
 import com.app.tddt4iots.enums.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 
 @Entity
 @Table(name = "fotochofer")
-@Data
 @NoArgsConstructor
 public class Fotochofer {
 
@@ -17,16 +17,18 @@ public class Fotochofer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "url", nullable = true, unique = false, length = 30)
+    @Column(name = "url", nullable = false, unique = false)
     private String url;
 
-    @Column(name = "nombre", nullable = true, unique = false, length = 30)
+    @Column(name = "nombre", nullable = false, unique = false, length = 30)
     private String nombre;
 
-    @Column(name = "descripcion", nullable = false, unique = false, length = 30)
+    @Column(name = "descripcion", nullable = true, unique = false)
     private String descripcion;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "chofer_id")
+    @JsonBackReference
     private Chofer chofer;
 
 
@@ -55,4 +57,36 @@ public class Fotochofer {
     public String toString() {
         return "com.app.tddt4iots.entities.Fotochofer[ id=" + id + " ]";
     }
-}    
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Chofer getChofer() {
+        return chofer;
+    }
+
+    public void setChofer(Chofer chofer) {
+        this.chofer = chofer;
+    }
+}

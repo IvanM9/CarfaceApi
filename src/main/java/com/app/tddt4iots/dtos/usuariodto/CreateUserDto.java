@@ -9,4 +9,6 @@ public class CreateUserDto {
     public String apellido;
     public String correo;
     public String clave;
+    public String direccion;
+    public String telefono;
 }
