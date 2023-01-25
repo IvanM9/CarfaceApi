@@ -11,6 +11,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/guardia")
+@CrossOrigin(origins = "*")
+
 public class GuardiaApi {
 
     @Autowired
