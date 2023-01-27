@@ -1,8 +1,8 @@
 package com.app.tddt4iots.service.UsuarioService;
 
 import com.app.tddt4iots.dtos.usuariodto.CreateUserDto;
+import com.app.tddt4iots.dtos.usuariodto.PutUserDto;
 import com.app.tddt4iots.entities.Usuario;
-import com.septimo.carface.carface.dtos.usuariodto.PutUserDto;
 import org.json.simple.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
 

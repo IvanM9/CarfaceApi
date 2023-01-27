@@ -1,4 +1,4 @@
-package com.septimo.carface.carface.dtos.usuariodto;
+package com.app.tddt4iots.dtos.usuariodto;
 
 import lombok.Data;
 

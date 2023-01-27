@@ -4,9 +4,9 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import com.app.tddt4iots.dao.UsuarioDao;
 import com.app.tddt4iots.dtos.usuariodto.CreateUserDto;
+import com.app.tddt4iots.dtos.usuariodto.PutUserDto;
 import com.app.tddt4iots.entities.Usuario;
 import com.app.tddt4iots.enums.Rol;
-import com.septimo.carface.carface.dtos.usuariodto.PutUserDto;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

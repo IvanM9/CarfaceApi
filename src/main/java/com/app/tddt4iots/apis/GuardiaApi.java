@@ -1,7 +1,11 @@
 package com.app.tddt4iots.apis;
 
 import com.app.tddt4iots.entities.Guardia;
+import com.app.tddt4iots.entities.Usuario;
+import com.app.tddt4iots.service.GuardiaService.GuardiaServiceImplement;
 import com.app.tddt4iots.dao.GuardiaDao;
+import com.app.tddt4iots.dtos.guardiadto.CreateGuardiaDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +22,9 @@ public class GuardiaApi {
     @Autowired
     private GuardiaDao guardiaDAO;
 
+    @Autowired
+    private GuardiaServiceImplement servicio;
+
     @GetMapping
     public ResponseEntity<List<Guardia>> getGuardia() {
         List<Guardia> listGuardia = guardiaDAO.findAll();
@@ -25,8 +32,8 @@ public class GuardiaApi {
     }
 
     @PostMapping
-    public ResponseEntity<Guardia> insertGuardia(@RequestBody Guardia guardia) {
-        Guardia newGuardia = guardiaDAO.save(guardia);
+    public ResponseEntity<?> insertGuardia(@RequestBody CreateGuardiaDto guardia) {
+        Usuario newGuardia = servicio.saveGuardia(guardia);
         return ResponseEntity.ok(newGuardia);
     }
 
