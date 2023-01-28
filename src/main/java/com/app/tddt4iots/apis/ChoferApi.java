@@ -32,9 +32,11 @@ public class ChoferApi {
     @Autowired
     JwtTokenService jwtTokenService;
 
+    private ArrayList<Rol> rol = new ArrayList<>();
+
     @GetMapping
     public ResponseEntity<?> getChofer(@RequestHeader String Authorization) {
-        ArrayList<Rol> rol = new ArrayList<>();
+        rol.clear();
         rol.add(Rol.ADMINISTRADOR);
         if(jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
             return new ResponseEntity<>("Usuario no autorizado", HttpStatus.FORBIDDEN);
@@ -60,6 +62,9 @@ public class ChoferApi {
 
     @DeleteMapping(value = "{id}")
     public ResponseEntity<Chofer> deletePersons(@PathVariable("id") Long id) {
+        rol.clear();
+        rol.add(Rol.ADMINISTRADOR);
+        rol.add(Rol.CHOFER);
         choferDAO.deleteById(id);
         return ResponseEntity.ok(null);
     }

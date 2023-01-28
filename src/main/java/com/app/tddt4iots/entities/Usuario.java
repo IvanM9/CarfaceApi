@@ -25,7 +25,7 @@ public class Usuario {
     @Column(name = "apellidos", nullable = false, unique = false, length = 30)
     private String apellidos;
 
-    @Column(name = "cedula", nullable = false, unique = false, length = 10)
+    @Column(name = "cedula", nullable = false, unique = true, length = 10)
     private String cedula;
 
     @Column(name = "telefono", nullable = true, unique = false, length = 10)
@@ -34,7 +34,7 @@ public class Usuario {
     @Column(name = "direccion", nullable = true, unique = false, length = 30)
     private String direccion;
 
-    @Column(name = "correo", nullable = false, unique = false, length = 50, updatable = false)
+    @Column(name = "correo", nullable = false, unique = true, length = 50, updatable = false)
     private String correo;
 
     @Column(name = "clave", nullable = false, unique = false)
