@@ -11,6 +11,8 @@ package com.app.tddt4iots.dao;
  import java.util.Optional;
 
 public interface UsuarioDao extends JpaRepository<Usuario, Long>, CrudRepository<Usuario, Long> {
+    @Query("select u from Usuario u where u.correo = ?1")
+    Usuario findByCorreo(String correo);
     Optional<Usuario> findOneByCorreo(String correo);
 
     @Transactional

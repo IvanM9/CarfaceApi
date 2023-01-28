@@ -32,6 +32,8 @@ services:
       - SPRING.THYMELEAF.SUFFIX=.html
       - spring.servlet.multipart.max-file-size=5MB
       - spring.servlet.multipart.max-request-size=50MB
+      - admin.correo=carfaceadmin@admin.com
+      - admin.clave=2023@Iot_CarFace
     volumes:
       - .:/usr/src/app
     restart: unless-stopped
