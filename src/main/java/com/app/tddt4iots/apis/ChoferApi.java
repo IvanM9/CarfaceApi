@@ -1,6 +1,9 @@
 package com.app.tddt4iots.apis;
 
+import com.app.tddt4iots.dao.UsuarioDao;
 import com.app.tddt4iots.dtos.choferdto.CreateChoferDto;
+import com.app.tddt4iots.dtos.choferdto.GetChoferDto;
+import com.app.tddt4iots.dtos.choferdto.PutChoferDto;
 import com.app.tddt4iots.entities.Chofer;
 import com.app.tddt4iots.dao.ChoferDao;
 import com.app.tddt4iots.entities.Usuario;
@@ -8,8 +11,10 @@ import com.app.tddt4iots.enums.Rol;
 import com.app.tddt4iots.security.JwtTokenService;
 import com.app.tddt4iots.service.ChoferService.ChoferServiceImplement;
 
+import com.app.tddt4iots.service.UsuarioService.UsuarioServiceImplement;
 import jakarta.servlet.annotation.HttpConstraint;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +32,8 @@ public class ChoferApi {
     @Autowired
     private ChoferDao choferDAO;
     @Autowired
+    private UsuarioServiceImplement usuarioServiceImplement;
+    @Autowired
     ChoferServiceImplement servicio;
 
     @Autowired
@@ -35,13 +42,19 @@ public class ChoferApi {
     private ArrayList<Rol> rol = new ArrayList<>();
 
     @GetMapping
-    public ResponseEntity<?> getChofer(@RequestHeader String Authorization) {
+    public ResponseEntity<?> getChoferes(@RequestHeader String Authorization) {
         rol.clear();
         rol.add(Rol.ADMINISTRADOR);
-        if(jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
+        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
             return new ResponseEntity<>("Usuario no autorizado", HttpStatus.FORBIDDEN);
-        List<Chofer> listChofer = choferDAO.findAll();
+        List<GetChoferDto> listChofer = servicio.getChoferes();
         return ResponseEntity.ok(listChofer);
+    }
+
+    @GetMapping(value = "{correo}")
+    public ResponseEntity<?> getChofer(@PathVariable("correo") String correo) {
+        JSONObject chofer = usuarioServiceImplement.getUsuarioByEmail(correo);
+        return new ResponseEntity<>(chofer, chofer == null || chofer.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK);
     }
 
     @PostMapping
@@ -50,9 +63,9 @@ public class ChoferApi {
         return ResponseEntity.ok(newChofer);
     }
 
-    @PutMapping
-    public ResponseEntity<Chofer> updateChofer(@RequestBody Chofer chofer) {
-        Chofer upChofer = choferDAO.save(chofer);
+    @PutMapping(value = "{id}")
+    public ResponseEntity<Chofer> updateChofer(@RequestBody PutChoferDto chofer, @PathVariable("id") Long id) {
+        Chofer upChofer = servicio.editChofer(chofer, id);
         if (upChofer != null) {
             return ResponseEntity.ok(upChofer);
         } else {

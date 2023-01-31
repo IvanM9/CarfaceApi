@@ -39,11 +39,20 @@ public class UsuarioServiceImplement implements UsuarioService {
     public JSONObject getUsuarioByEmail(String correo) {
         JSONObject object = new JSONObject();
         try {
-            Usuario chofer = repository.findOneByCorreo(correo).orElseThrow();
-            object.put("nombre", chofer.getNombres());
-            object.put("apellido", chofer.getApellidos());
-            object.put("ci", chofer.getCedula());
-            object.put("fotos", chofer.getChofer().getFotochofer().toArray());
+            Usuario usuario = repository.findOneByCorreo(correo).orElseThrow();
+            object.put("nombre", usuario.getNombres());
+            object.put("apellido", usuario.getApellidos());
+            object.put("ci", usuario.getCedula());
+            object.put("direccion",usuario.getDireccion());
+            object.put("telefono", usuario.getTelefono());
+            object.put("id", usuario.getId());
+            object.put("fotos", usuario.getChofer().getFotochofer().toArray());
+            switch (usuario.getRol()){
+                case CHOFER -> {
+                    object.put("chofer",usuario.getChofer());
+                }
+                case GUARDIA -> object.put("guardia", usuario.getGuardia());
+            }
             return object;
         } catch (Exception e) {
             return null;

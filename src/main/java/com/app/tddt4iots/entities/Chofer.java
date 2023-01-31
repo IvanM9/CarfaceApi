@@ -108,4 +108,5 @@ public class Chofer {
     public void setRegistro(ArrayList<Registro> registro) {
         this.registro = registro;
     }
+
 }

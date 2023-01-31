@@ -31,7 +31,7 @@ public class CarfaceApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (usuarioDao.findByCorreo(correo)==null) {
+        if (usuarioDao.findOneByCorreo(correo) == null) {
             CreateUserDto usuario = new CreateUserDto();
             usuario.setCorreo(correo);
             usuario.setClave(clave);
