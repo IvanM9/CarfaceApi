@@ -1,47 +1,73 @@
 package com.app.tddt4iots.service.ChoferService;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.app.tddt4iots.dao.ChoferDao;
+import com.app.tddt4iots.dao.FotochoferDao;
 import com.app.tddt4iots.dao.UsuarioDao;
 import com.app.tddt4iots.dtos.choferdto.CreateChoferDto;
 import com.app.tddt4iots.dtos.choferdto.GetChoferDto;
 import com.app.tddt4iots.dtos.choferdto.PutChoferDto;
 import com.app.tddt4iots.dtos.usuariodto.CreateUserDto;
 import com.app.tddt4iots.entities.Chofer;
+import com.app.tddt4iots.entities.Fotochofer;
 import com.app.tddt4iots.entities.Usuario;
 import com.app.tddt4iots.enums.Rol;
 import com.app.tddt4iots.service.UsuarioService.UsuarioServiceImplement;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class ChoferServiceImplement implements ChoferService {
 
     @Autowired
     ChoferDao choferDao;
+    @Autowired
+    FotochoferDao fotochoferDao;
 
     @Autowired
     UsuarioDao usuario;
+    @Autowired
+    EntityManager entityManager;
 
     @Autowired
     UsuarioServiceImplement usuarioServiceImplement;
 
+    @Autowired
+    AmazonS3 amazonS3;
+
+    @Value("${aws.s3.bucket}")
+    private String bucketName;
+
     @Override
     @Transactional
     public Usuario saveChofer(CreateChoferDto chofer) {
-        CreateUserDto user = chofer;
-        Chofer chofer1 = new Chofer();
-        chofer1.setLicencia(chofer.getTipolicencia());
-        Usuario usuario1 = usuarioServiceImplement.createUsuario(user, Rol.CHOFER);
-        chofer1.setUsuario(usuario1);
-        usuario1.setChofer(chofer1);
-        System.out.println(usuario1);
-        return usuario.save(usuario1);
+        try {
+            CreateUserDto user = chofer;
+            Chofer chofer1 = new Chofer();
+            chofer1.setLicencia(chofer.getTipolicencia());
+            Usuario usuario1 = usuarioServiceImplement.createUsuario(user, Rol.CHOFER);
+            chofer1.setUsuario(usuario1);
+            usuario1.setChofer(chofer1);
+            System.out.println(usuario1);
+            return usuario.save(usuario1);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -66,5 +92,59 @@ public class ChoferServiceImplement implements ChoferService {
     public List<GetChoferDto> getChoferes() {
         return usuario.queryByRol(Rol.CHOFER);
 
+    }
+
+    @Override
+    public Boolean uploadPhoto(MultipartFile[] files, Long id) {
+        try {
+            //TODO: Borrar imágenes que se cargan
+            Usuario usuario1 = usuario.findById(id).orElseThrow();
+            List<Fotochofer> fotos = new ArrayList<>();
+            AtomicReference<Boolean> success = new AtomicReference<>(false);
+            Arrays.asList(files).stream().forEach(file -> {
+                File mainFile = new File(file.getOriginalFilename());
+                try (FileOutputStream stream = new FileOutputStream(mainFile)) {
+                    stream.write(file.getBytes());
+                    String newFileName = System.currentTimeMillis() + "_" + mainFile.getName();
+                    PutObjectRequest request = new PutObjectRequest(bucketName, newFileName, mainFile);
+                    PutObjectResult resultado = amazonS3.putObject(request);
+                    fotos.add(newFotoChofer(mainFile.getName(), request.getKey(), usuario1.getChofer()));
+                    System.out.println(resultado.getSSECustomerKeyMd5());
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    addFotosChofer(fotos, usuario1.getChofer());
+                    success.set(true);
+                }
+            });
+            return success.get();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+    @Transactional
+    private Fotochofer newFotoChofer(String nombre, String url, Chofer chofer) {
+        Fotochofer fotochofer = new Fotochofer();
+        fotochofer.setNombre(nombre);
+        fotochofer.setUrl(url);
+        fotochofer.setChofer(chofer);
+
+        return fotochoferDao.save(fotochofer);
+    }
+
+    @Transactional
+    private Boolean addFotosChofer(List<Fotochofer> fotos, Chofer chofer) {
+        try {
+            chofer.getFotochofer().addAll(fotos);
+            choferDao.save(chofer);
+            return true;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
     }
 }

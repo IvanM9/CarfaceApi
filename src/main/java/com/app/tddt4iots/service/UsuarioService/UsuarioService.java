@@ -20,6 +20,5 @@ public interface UsuarioService {
 
     Usuario editUsuario(Long id, PutUserDto usuario);
 
-    Boolean updloadPhoto(MultipartFile[] files);
 
 }

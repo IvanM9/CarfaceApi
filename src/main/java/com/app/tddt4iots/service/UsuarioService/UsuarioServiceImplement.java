@@ -76,23 +76,6 @@ public class UsuarioServiceImplement implements UsuarioService {
         return repository.findById(id).orElseThrow();
     }
 
-    @Override
-    public Boolean updloadPhoto(MultipartFile[] files) {
-        // TODO: Método para subir fotos a la nube
-        try {
-            AtomicReference<Boolean> success = new AtomicReference<>(false);
-            String localPath = Paths.get("").toAbsolutePath().toString() +
-                    "/src/main/resources/static/images";
-            ArrayList<String> fileNames = new ArrayList<>();
-            Arrays.asList(files).stream().forEach(file -> {
-                //success.set(FileUtils.upload(file, localPath, file.getOriginalFilename()));
-                success.set(true);
-            });
-            return success.get();
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     public Usuario createUsuario(CreateUserDto usuario1, Rol rol) {
         Usuario usuario = new Usuario();

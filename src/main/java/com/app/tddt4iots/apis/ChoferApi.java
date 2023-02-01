@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,9 @@ public class ChoferApi {
     }
 
     @GetMapping(value = "{correo}")
-    public ResponseEntity<?> getChofer(@PathVariable("correo") String correo) {
+    public ResponseEntity<?> getChofer(@PathVariable("correo") String correo, @RequestHeader String Authorization) {
+        if (jwtTokenService.validateTokenAndGetDatas(Authorization) == null)
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         JSONObject chofer = usuarioServiceImplement.getUsuarioByEmail(correo);
         return new ResponseEntity<>(chofer, chofer == null || chofer.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK);
     }
@@ -60,26 +63,35 @@ public class ChoferApi {
     @PostMapping
     public ResponseEntity<?> insertChofer(@RequestBody CreateChoferDto chofer) {
         Usuario newChofer = servicio.saveChofer(chofer);
-        return ResponseEntity.ok(newChofer);
+        return new ResponseEntity<>(newChofer, newChofer != null ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping(value = "{id}")
-    public ResponseEntity<Chofer> updateChofer(@RequestBody PutChoferDto chofer, @PathVariable("id") Long id) {
+    public ResponseEntity<Chofer> updateChofer(@RequestBody PutChoferDto chofer, @PathVariable("id") Long id, @RequestHeader String Authorization) {
+        rol.clear();
+        rol.add(Rol.CHOFER);
+        rol.add(Rol.ADMINISTRADOR);
+        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         Chofer upChofer = servicio.editChofer(chofer, id);
-        if (upChofer != null) {
-            return ResponseEntity.ok(upChofer);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return new ResponseEntity<>(upChofer, upChofer != null ? HttpStatus.OK : HttpStatus.NOT_MODIFIED);
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity<Chofer> deletePersons(@PathVariable("id") Long id) {
+    public ResponseEntity<Chofer> deletePersons(@PathVariable("id") Long id, @RequestHeader String Authorization) {
         rol.clear();
         rol.add(Rol.ADMINISTRADOR);
         rol.add(Rol.CHOFER);
+        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         choferDAO.deleteById(id);
         return ResponseEntity.ok(null);
+    }
+
+    @PutMapping("/fotos/{id}")
+    public ResponseEntity<?> uploadPhotos(@RequestPart(value = "files") MultipartFile[] files, @PathVariable("id") Long id) {
+        Boolean respuesta = servicio.uploadPhoto(files, id);
+        return new ResponseEntity<>(respuesta ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
 }

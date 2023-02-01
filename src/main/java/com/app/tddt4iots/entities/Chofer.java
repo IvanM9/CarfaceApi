@@ -97,7 +97,7 @@ public class Chofer {
         return fotochofer;
     }
 
-    public void setFotochofer(ArrayList<Fotochofer> fotochofer) {
+    public void setFotochofer(List<Fotochofer> fotochofer) {
         this.fotochofer = fotochofer;
     }
 
@@ -105,7 +105,7 @@ public class Chofer {
         return registro;
     }
 
-    public void setRegistro(ArrayList<Registro> registro) {
+    public void setRegistro(List<Registro> registro) {
         this.registro = registro;
     }
 
