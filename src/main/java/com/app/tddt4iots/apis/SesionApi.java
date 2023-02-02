@@ -20,11 +20,10 @@ public class SesionApi {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestHeader String correo, @RequestHeader String clave) {
-        JSONObject object = new JSONObject();
-        object.put("token", sessionService.login(correo, clave));
+        JSONObject object = sessionService.login(correo, clave);
         return new ResponseEntity<>(
                 object,
-                object.get("token") == null ? HttpStatus.UNAUTHORIZED : HttpStatus.OK);
+                object == null ? HttpStatus.UNAUTHORIZED : HttpStatus.OK);
 
     }
 }

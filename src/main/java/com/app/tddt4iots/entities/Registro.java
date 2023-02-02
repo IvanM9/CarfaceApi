@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Registro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "fecha", nullable = false, unique = false)

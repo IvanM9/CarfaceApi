@@ -6,6 +6,7 @@ import com.app.tddt4iots.dao.UsuarioDao;
 import com.app.tddt4iots.dtos.usuariodto.JwtDto;
 import com.app.tddt4iots.entities.Usuario;
 import com.app.tddt4iots.enums.Rol;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -26,7 +27,7 @@ public class SessionService {
     @Autowired
     JwtTokenService jwtTokenService;
 
-    public String login(String correo, String clave) {
+    public JSONObject login(String correo, String clave) {
         try {
             Usuario respuesta = usuario.findOneByCorreo(correo).orElseThrow();
             System.out.println(respuesta);
@@ -40,9 +41,12 @@ public class SessionService {
             datosToken.setId(respuesta.getId());
             datosToken.setCorreo(respuesta.getCorreo());
             datosToken.setRol(respuesta.getRol());
-            return jwtTokenService.generateToken(
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("token", jwtTokenService.generateToken(
                     datosToken
-                    ,respuesta.getRol() == Rol.CHOFER);
+                    , respuesta.getRol() == Rol.CHOFER));
+            jsonObject.put("rol", respuesta.getRol());
+            return jsonObject;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;

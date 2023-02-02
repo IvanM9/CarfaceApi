@@ -14,13 +14,13 @@ import java.util.ArrayList;
 public class Fotochofer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "url", nullable = false, unique = false)
     private String url;
 
-    @Column(name = "nombre", nullable = false, unique = false, length = 30)
+    @Column(name = "nombre", nullable = false, unique = false)
     private String nombre;
 
     @Column(name = "descripcion", nullable = true, unique = false)

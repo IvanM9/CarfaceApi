@@ -89,7 +89,12 @@ public class ChoferApi {
     }
 
     @PutMapping("/fotos/{id}")
-    public ResponseEntity<?> uploadPhotos(@RequestPart(value = "files") MultipartFile[] files, @PathVariable("id") Long id) {
+    public ResponseEntity<?> uploadPhotos(@RequestPart(value = "files") MultipartFile[] files, @PathVariable("id") Long id, @RequestHeader String Authorization) {
+        rol.clear();
+        rol.add(Rol.CHOFER);
+        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         Boolean respuesta = servicio.uploadPhoto(files, id);
         return new ResponseEntity<>(respuesta ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }

@@ -107,9 +107,9 @@ public class ChoferServiceImplement implements ChoferService {
                     stream.write(file.getBytes());
                     String newFileName = System.currentTimeMillis() + "_" + mainFile.getName();
                     PutObjectRequest request = new PutObjectRequest(bucketName, newFileName, mainFile);
-                    PutObjectResult resultado = amazonS3.putObject(request);
+                    amazonS3.putObject(request);
                     fotos.add(newFotoChofer(mainFile.getName(), request.getKey(), usuario1.getChofer()));
-                    System.out.println(resultado.getSSECustomerKeyMd5());
+                    System.out.println("Eliminado: "+ mainFile.delete());
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 } catch (IOException e) {
