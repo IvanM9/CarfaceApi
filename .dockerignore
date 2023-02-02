@@ -1,0 +1,4 @@
+./src/main/resources/application.properties
+docker-compose.yml
+.idea
+.vscode

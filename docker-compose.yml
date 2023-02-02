@@ -12,9 +12,7 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=carface
   api:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    image: imanzabag/carface_server
     container_name: api
     links:
       - databasepg
