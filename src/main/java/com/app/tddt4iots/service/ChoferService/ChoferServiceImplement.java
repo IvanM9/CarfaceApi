@@ -97,7 +97,6 @@ public class ChoferServiceImplement implements ChoferService {
     @Override
     public Boolean uploadPhoto(MultipartFile[] files, Long id) {
         try {
-            //TODO: Borrar imágenes que se cargan
             Usuario usuario1 = usuario.findById(id).orElseThrow();
             List<Fotochofer> fotos = new ArrayList<>();
             AtomicReference<Boolean> success = new AtomicReference<>(false);
