@@ -58,10 +58,6 @@ public class UsuarioServiceImplement implements UsuarioService {
         }
     }
 
-    @Override
-    public Usuario saveUsuario(CreateUserDto usuario) {
-        return repository.save(createUsuario(usuario, Rol.CHOFER));
-    }
 
     @Override
     public Boolean deleteUsuario(long id) {

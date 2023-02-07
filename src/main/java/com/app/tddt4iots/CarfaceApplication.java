@@ -15,10 +15,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class CarfaceApplication implements CommandLineRunner {
-    @Autowired
-    UsuarioDao usuarioDao;
+
     @Autowired
     UsuarioServiceImplement usuarioServiceImplement;
+    @Autowired
+    UsuarioDao usuarioDao;
 
     @Value("${admin.correo}")
     String correo;
@@ -31,15 +32,17 @@ public class CarfaceApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        
+
         try {
-            if (usuarioDao.findOneByCorreo(correo).isEmpty()) {
+            if (usuarioServiceImplement.getUsuarioByEmail(correo)==null) {
                 CreateUserDto usuario = new CreateUserDto();
                 usuario.setCorreo(correo);
                 usuario.setClave(clave);
                 usuario.setNombre("admin");
                 usuario.setApellido("admin");
                 usuario.setCi("admin");
-                Usuario user = usuarioDao.save(usuarioServiceImplement.createUsuario(usuario, Rol.ADMINISTRADOR));
+                usuarioDao.save(usuarioServiceImplement.createUsuario(usuario, Rol.ADMINISTRADOR));
                 System.out.println("Administrador creado");
             }
         } catch (Exception e) {

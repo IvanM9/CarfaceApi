@@ -4,6 +4,7 @@ import com.app.tddt4iots.dao.UsuarioDao;
 import com.app.tddt4iots.dtos.choferdto.CreateChoferDto;
 import com.app.tddt4iots.dtos.choferdto.GetChoferDto;
 import com.app.tddt4iots.dtos.choferdto.PutChoferDto;
+import com.app.tddt4iots.dtos.usuariodto.JwtDto;
 import com.app.tddt4iots.entities.Chofer;
 import com.app.tddt4iots.dao.ChoferDao;
 import com.app.tddt4iots.entities.Usuario;
@@ -88,14 +89,15 @@ public class ChoferApi {
         return ResponseEntity.ok(null);
     }
 
-    @PutMapping("/fotos/{id}")
-    public ResponseEntity<?> uploadPhotos(@RequestPart(value = "files") MultipartFile[] files, @PathVariable("id") Long id, @RequestHeader String Authorization) {
+    @PutMapping("/fotos")
+    public ResponseEntity<?> uploadPhotos(@RequestPart(value = "files") MultipartFile[] files, @RequestHeader String Authorization) {
         rol.clear();
         rol.add(Rol.CHOFER);
+        JwtDto user = jwtTokenService.validateTokenAndGetDatas(Authorization, rol);
         if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        Boolean respuesta = servicio.uploadPhoto(files, id);
+        Boolean respuesta = servicio.uploadPhoto(files, user.getId());
         return new ResponseEntity<>(respuesta ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 

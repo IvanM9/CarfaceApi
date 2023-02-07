@@ -22,7 +22,7 @@ public class Fotovehiculo {
     @Column(name = "url", nullable = false, unique = false)
     private String url;
 
-    @Column(name = "nombre", nullable = false, unique = false, length = 30)
+    @Column(name = "nombre", nullable = false, unique = false)
     private String nombre;
 
     @Column(name = "descripcion", nullable = true, unique = false)
@@ -31,7 +31,7 @@ public class Fotovehiculo {
     @Column(name = "fechacreacion", nullable = false, unique = false)
     private Date fechacreacion;
 
-    @Column(name = "fechamodificacion", nullable = false, unique = false)
+    @Column(name = "fechamodificacion", nullable = false, unique = false, updatable = false)
     private Date fechamodificacion;
 
     @ManyToOne(cascade = CascadeType.ALL)

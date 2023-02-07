@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,12 @@ public class Vehiculo {
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Registro> registro;
+
+    @Column(name = "fechacreacion", nullable = false, unique = false, updatable = false)
+    private Date fechacreacion;
+
+    @Column(name = "fechamodificacion", nullable = false, unique = false)
+    private Date fechamodificacion;
 
 
     @Override

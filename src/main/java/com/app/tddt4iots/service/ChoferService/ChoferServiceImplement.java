@@ -15,6 +15,8 @@ import com.app.tddt4iots.entities.Fotochofer;
 import com.app.tddt4iots.entities.Usuario;
 import com.app.tddt4iots.enums.Rol;
 import com.app.tddt4iots.service.UsuarioService.UsuarioServiceImplement;
+import com.app.tddt4iots.utils.FilesUtil;
+
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,8 @@ public class ChoferServiceImplement implements ChoferService {
 
     @Autowired
     AmazonS3 amazonS3;
+    @Autowired
+    FilesUtil filesUtil;
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
@@ -101,23 +105,18 @@ public class ChoferServiceImplement implements ChoferService {
             List<Fotochofer> fotos = new ArrayList<>();
             AtomicReference<Boolean> success = new AtomicReference<>(false);
             Arrays.asList(files).stream().forEach(file -> {
-                File mainFile = new File(file.getOriginalFilename());
-                try (FileOutputStream stream = new FileOutputStream(mainFile)) {
-                    stream.write(file.getBytes());
-                    String newFileName = System.currentTimeMillis() + "_" + mainFile.getName();
-                    PutObjectRequest request = new PutObjectRequest(bucketName, newFileName, mainFile);
-                    amazonS3.putObject(request);
-                    fotos.add(newFotoChofer(mainFile.getName(), request.getKey(), usuario1.getChofer()));
-                    System.out.println("Eliminado: "+ mainFile.delete());
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    addFotosChofer(fotos, usuario1.getChofer());
+                try {
+                    PutObjectRequest request =  filesUtil.uploadFile(file, bucketName);
+                    fotos.add(newFotoChofer(file.getOriginalFilename(), request.getKey(), usuario1.getChofer()));
                     success.set(true);
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                    success.set(false);
                 }
             });
+            if (!fotos.isEmpty()) {
+                addFotosChofer(fotos, usuario1.getChofer());
+            }
             return success.get();
         } catch (Exception e) {
             return null;

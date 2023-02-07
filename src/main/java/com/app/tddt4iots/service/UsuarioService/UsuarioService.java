@@ -15,7 +15,7 @@ public interface UsuarioService {
     Optional<Usuario> getUsuarioById(long id);
     JSONObject getUsuarioByEmail(String correo);
 
-    Usuario saveUsuario(CreateUserDto usuario);
+
     Boolean deleteUsuario(long id);
 
     Usuario editUsuario(Long id, PutUserDto usuario);
