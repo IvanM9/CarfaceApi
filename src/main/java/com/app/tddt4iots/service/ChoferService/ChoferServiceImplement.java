@@ -43,8 +43,6 @@ public class ChoferServiceImplement implements ChoferService {
 
     @Autowired
     UsuarioDao usuario;
-    @Autowired
-    EntityManager entityManager;
 
     @Autowired
     UsuarioServiceImplement usuarioServiceImplement;
@@ -54,7 +52,7 @@ public class ChoferServiceImplement implements ChoferService {
     @Autowired
     FilesUtil filesUtil;
 
-    @Value("${aws.s3.bucket}")
+    @Value("${aws.s3.bucket_rekognition}")
     private String bucketName;
 
     @Override

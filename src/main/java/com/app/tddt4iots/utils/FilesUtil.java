@@ -16,6 +16,9 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 public class FilesUtil {
     @Autowired
     AmazonS3 amazonS3;
+
+    @Autowired
+    AmazonRekognition amazonRekognition;
     
 
     public PutObjectRequest uploadFile(MultipartFile file, String bucket){
@@ -34,5 +37,9 @@ public class FilesUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public CreateColletionResult createColletionRekognition(){
+        return null;
     }
 }

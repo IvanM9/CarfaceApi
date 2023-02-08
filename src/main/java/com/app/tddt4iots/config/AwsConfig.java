@@ -1,5 +1,8 @@
 package com.app.tddt4iots.config;
 
+import com.amazonaws.services.rekognition.AmazonRekognition;
+import com.amazonaws.services.rekognition.AmazonRekognitionClient;
+import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +25,22 @@ public class AwsConfig {
     @Value("${aws.s3.region}")
     private String region;
 
+
+
     @Bean
     public AmazonS3 getS3Client() {
         BasicAWSCredentials credentials = new BasicAWSCredentials(accessKeyId, accessSecretKey);
         return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))
                 .withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
+    }
+
+    @Bean
+    public AmazonRekognition getRekognitionClient(){
+        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKeyId, accessSecretKey);
+
+        return AmazonRekognitionClientBuilder.standard().withRegion(Regions.fromName(region))
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .build();
     }
 
 }

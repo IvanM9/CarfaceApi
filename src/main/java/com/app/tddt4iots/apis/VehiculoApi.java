@@ -40,9 +40,15 @@ public class VehiculoApi {
         return ResponseEntity.ok(listVehiculo);
     }
 
-    @PostMapping("chofer/{id}") //TODO: el id se debe obtener del token
-    public ResponseEntity<?> insertVehiculo(@RequestBody CreateVehiculoDto vehiculo, @PathVariable("id") Long id) {
-        Optional<Vehiculo> vehiculo1 = vehiculoServiceImplement.addVehiculo(id, vehiculo);
+    @PostMapping()
+    public ResponseEntity<?> insertVehiculo(@RequestBody CreateVehiculoDto vehiculo, @RequestHeader String Authorization) {
+        rol.clear();
+        rol.add(Rol.CHOFER);
+        JwtDto user = jwtTokenService.validateTokenAndGetDatas(Authorization, rol);
+        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        Optional<Vehiculo> vehiculo1 = vehiculoServiceImplement.addVehiculo(user.getId(), vehiculo);
         return new ResponseEntity<>(vehiculo1.get(), vehiculo1.isEmpty() ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
     }
 
