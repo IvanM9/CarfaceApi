@@ -18,8 +18,8 @@ public class DispositivoApi {
     DispositivoServiceImplement dispositivoService;
 
     @PostMapping("/comparar")
-    public ResponseEntity<?> compareFace(@RequestPart(value = "files") MultipartFile file){
-        Boolean compare =  dispositivoService.compareFace(file);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<?> compareFace(@RequestPart(value = "files") MultipartFile file) {
+        Boolean compare = dispositivoService.compareFace(file);
+        return new ResponseEntity<>(compare ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
     }
 }

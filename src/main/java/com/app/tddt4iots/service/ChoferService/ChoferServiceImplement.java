@@ -105,6 +105,7 @@ public class ChoferServiceImplement implements ChoferService {
             Arrays.asList(files).stream().forEach(file -> {
                 try {
                     PutObjectRequest request =  filesUtil.uploadFile(file, bucketName);
+                    filesUtil.indexFace(bucketName, request.getKey());
                     fotos.add(newFotoChofer(file.getOriginalFilename(), request.getKey(), usuario1.getChofer()));
                     success.set(true);
                 } catch (Exception e) {

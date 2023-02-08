@@ -29,25 +29,27 @@ public class DispositivoServiceImplement implements DispositivoService {
     public Boolean compareFace(MultipartFile file) {
         try {
             PutObjectRequest foto = filesUtil.uploadFile(file, bucket);
-            //TODO: Crear una colección para reconocer los rostros
 
             SearchFacesByImageRequest searchFacesByImageRequest = new SearchFacesByImageRequest().withImage(new Image()
-                    .withS3Object(new S3Object().withName(foto.getKey()).withBucket(bucket))).withCollectionId(null)
+                            .withS3Object(new S3Object().withName(foto.getKey()).withBucket(bucket))).withCollectionId("CarFaces")
                     .withMaxFaces(5);
             SearchFacesByImageResult result = amazonRekognition.searchFacesByImage(searchFacesByImageRequest);
             List<FaceMatch> lists = result.getFaceMatches();
 
             System.out.println("Detected labels for " + foto.getKey());
 
+            Boolean match = false;
             if (!lists.isEmpty()) {
                 for (FaceMatch label : lists) {
                     System.out.println(label.getFace() + ": Similarity is " + label.getSimilarity().toString());
                 }
-                return true;
+                match = true;
             } else {
                 System.out.println("Faces Does not match");
-                return false;
+                match = false;
             }
+            filesUtil.deleteFile(bucket, foto.getKey());
+            return match;
         } catch (AmazonRekognitionException e) {
             e.printStackTrace();
             return false;
