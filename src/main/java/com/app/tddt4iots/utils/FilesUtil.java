@@ -33,8 +33,9 @@ public class FilesUtil {
 
         try (FileOutputStream stream = new FileOutputStream(mainFile)) {
             stream.write(file.getBytes());
-            String nombre = id == null ? "" : id + "_";
-            String newFileName = nombre + System.currentTimeMillis() + "_" + mainFile.getName().substring(mainFile.getName().lastIndexOf("."));
+            String newFileName = id != null ?
+                    id + "_" + System.currentTimeMillis() + "_" + mainFile.getName().substring(mainFile.getName().lastIndexOf("."))
+                    : System.currentTimeMillis() +"_"+ mainFile.getName();
             PutObjectRequest request = new PutObjectRequest(bucket, newFileName, mainFile);
             amazonS3.putObject(request);
             System.out.println("Eliminado " + mainFile.getName() + ":" + mainFile.delete());
@@ -125,8 +126,7 @@ public class FilesUtil {
 
     public Boolean deleteFile(String bucket, String image_key) {
         try {
-            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, image_key);
-            amazonS3.deleteObject(deleteObjectRequest);
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, image_key));
             return true;
         } catch (AmazonServiceException e) {
             e.printStackTrace();

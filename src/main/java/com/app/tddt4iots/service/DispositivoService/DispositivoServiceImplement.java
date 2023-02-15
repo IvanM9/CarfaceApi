@@ -54,9 +54,11 @@ public class DispositivoServiceImplement implements DispositivoService {
                 for (FaceMatch label : lists) {
                     System.out.println(label.getFace() + ": Similarity is " + label.getSimilarity().toString());
                 }
-                String archivo = lists.get(0).getSimilarity().toString();
+                String archivo = lists.get(0).getFace().getExternalImageId();
                 match = true;
-                guardiaApi.sendMessage(choferService.findById(Long.valueOf(archivo.substring(0, archivo.indexOf("_")))).get());
+                Chofer chofer = choferService.findById(Long.valueOf(archivo.substring(0, archivo.indexOf("_")))).get();
+                System.out.println("El chofer es: "+chofer.getUsuario().getNombres()+" "+chofer.getUsuario().getApellidos());
+                //guardiaApi.sendMessage(chofer);
             } else {
                 System.out.println("Faces Does not match");
                 match = false;
