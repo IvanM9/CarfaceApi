@@ -29,9 +29,11 @@ tiempo real a los guardias encargados del ingreso y salida de los vehículos.
       - aws.secret_access_key
       - aws.s3.region
       - aws.s3.bucket
+      - aws.s3.bucket_rekognition
+      - aws.s3.bucket_2
 
 ### Docker
 
-<code>
-    docker-compose up -d
-</code>
+``` bash
+docker-compose up -d
+```

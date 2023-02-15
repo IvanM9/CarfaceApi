@@ -93,7 +93,7 @@ public class VehiculoServiceImplement implements VehiculoService{
         AtomicReference<Boolean> success = new AtomicReference<>(false);
         Arrays.asList(files).stream().forEach(file->{
             try {
-                PutObjectRequest request =  filesUtil.uploadFile(file, bucketName);
+                PutObjectRequest request =  filesUtil.uploadFile(file, bucketName, null);
                 fotos.add(newFotoVehiculo(file.getOriginalFilename(), request.getKey(), vehiculo));
                 success.set(true);
             } catch (Exception e) {

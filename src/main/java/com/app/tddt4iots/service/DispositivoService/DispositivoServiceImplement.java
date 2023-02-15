@@ -5,6 +5,11 @@ import com.amazonaws.services.rekognition.model.*;
 import com.amazonaws.services.rekognition.model.Image;
 import com.amazonaws.services.rekognition.model.CompareFacesMatch;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.app.tddt4iots.apis.GuardiaApi;
+import com.app.tddt4iots.dao.ChoferDao;
+import com.app.tddt4iots.entities.Chofer;
+import com.app.tddt4iots.service.ChoferService.ChoferService;
+import com.app.tddt4iots.service.ChoferService.ChoferServiceImplement;
 import com.app.tddt4iots.utils.FilesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +19,7 @@ import software.amazon.awssdk.core.SdkBytes;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,17 +28,22 @@ public class DispositivoServiceImplement implements DispositivoService {
     AmazonRekognition amazonRekognition;
     @Autowired
     FilesUtil filesUtil;
+    @Autowired
+    ChoferDao choferService;
+
+    @Autowired
+    GuardiaApi guardiaApi;
     @Value("${aws.s3.bucket}")
     private String bucket;
 
     @Override
     public Boolean compareFace(MultipartFile file) {
         try {
-            PutObjectRequest foto = filesUtil.uploadFile(file, bucket);
+            PutObjectRequest foto = filesUtil.uploadFile(file, bucket, null);
 
             SearchFacesByImageRequest searchFacesByImageRequest = new SearchFacesByImageRequest().withImage(new Image()
                             .withS3Object(new S3Object().withName(foto.getKey()).withBucket(bucket))).withCollectionId("CarFaces")
-                    .withMaxFaces(5);
+                    .withMaxFaces(3);
             SearchFacesByImageResult result = amazonRekognition.searchFacesByImage(searchFacesByImageRequest);
             List<FaceMatch> lists = result.getFaceMatches();
 
@@ -43,7 +54,9 @@ public class DispositivoServiceImplement implements DispositivoService {
                 for (FaceMatch label : lists) {
                     System.out.println(label.getFace() + ": Similarity is " + label.getSimilarity().toString());
                 }
+                String archivo = lists.get(0).getSimilarity().toString();
                 match = true;
+                guardiaApi.sendMessage(choferService.findById(Long.valueOf(archivo.substring(0, archivo.indexOf("_")))).get());
             } else {
                 System.out.println("Faces Does not match");
                 match = false;

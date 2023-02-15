@@ -28,12 +28,13 @@ public class FilesUtil {
     AmazonRekognition amazonRekognition;
 
 
-    public PutObjectRequest uploadFile(MultipartFile file, String bucket) {
+    public PutObjectRequest uploadFile(MultipartFile file, String bucket, Long id) {
         File mainFile = new File(file.getOriginalFilename());
 
         try (FileOutputStream stream = new FileOutputStream(mainFile)) {
             stream.write(file.getBytes());
-            String newFileName = System.currentTimeMillis() + "_" + mainFile.getName();
+            String nombre = id == null ? "" : id + "_";
+            String newFileName = nombre + System.currentTimeMillis() + "_" + mainFile.getName().substring(mainFile.getName().lastIndexOf("."));
             PutObjectRequest request = new PutObjectRequest(bucket, newFileName, mainFile);
             amazonS3.putObject(request);
             System.out.println("Eliminado " + mainFile.getName() + ":" + mainFile.delete());
