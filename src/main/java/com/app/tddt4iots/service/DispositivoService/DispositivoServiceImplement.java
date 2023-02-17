@@ -58,7 +58,6 @@ public class DispositivoServiceImplement implements DispositivoService {
                 match = true;
                 Chofer chofer = choferService.findById(Long.valueOf(archivo.substring(0, archivo.indexOf("_")))).get();
                 System.out.println("El chofer es: "+chofer.getUsuario().getNombres()+" "+chofer.getUsuario().getApellidos());
-                //guardiaApi.sendMessage(chofer);
             } else {
                 System.out.println("Faces Does not match");
                 match = false;

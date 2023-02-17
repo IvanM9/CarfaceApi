@@ -15,10 +15,6 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -77,23 +73,5 @@ public class GuardiaApi {
         return ResponseEntity.ok(null);
     }
 
-    @MessageMapping("/control.register")
-    @SendTo("/verificacion")
-    public Boolean register(@Payload String token, SimpMessageHeaderAccessor simpMessageHeaderAccessor) {
-        rol.clear();
-        rol.add(Rol.GUARDIA);
-        JwtDto usuario = jwtTokenService.validateTokenAndGetDatas("Bearer: " + token, rol);
-        if (usuario == null) {
-            return false;
-        }
-        simpMessageHeaderAccessor.getSessionAttributes().put("user", usuario.getId());
-        return true;
-    }
-
-    @MessageMapping("/control.send")
-    @SendTo("/verificacion")
-    public Chofer sendMessage(Chofer chofer){
-        return chofer;
-    }
 
 }

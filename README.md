@@ -33,7 +33,11 @@ tiempo real a los guardias encargados del ingreso y salida de los vehículos.
       - aws.s3.bucket_2
 
 ### Docker
-
+#### Modo producción
 ``` bash
-docker-compose up -d
+docker-compose up -d databasepg api
+```
+#### Modo desarrollo
+``` bash
+docker-compose up -d dev databasepg
 ```
