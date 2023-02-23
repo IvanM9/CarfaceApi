@@ -8,9 +8,12 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.app.tddt4iots.apis.GuardiaApi;
 import com.app.tddt4iots.dao.ChoferDao;
 import com.app.tddt4iots.entities.Chofer;
+import com.app.tddt4iots.entities.Vehiculo;
 import com.app.tddt4iots.service.ChoferService.ChoferService;
 import com.app.tddt4iots.service.ChoferService.ChoferServiceImplement;
 import com.app.tddt4iots.utils.FilesUtil;
+import com.app.tddt4iots.websocket.SocketClient;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,8 @@ public class DispositivoServiceImplement implements DispositivoService {
     FilesUtil filesUtil;
     @Autowired
     ChoferDao choferService;
+    @Autowired
+    SocketClient socketClient;
 
     @Autowired
     GuardiaApi guardiaApi;
@@ -57,6 +62,8 @@ public class DispositivoServiceImplement implements DispositivoService {
                 String archivo = lists.get(0).getFace().getExternalImageId();
                 match = true;
                 Chofer chofer = choferService.findById(Long.valueOf(archivo.substring(0, archivo.indexOf("_")))).get();
+                if (!sendChofer(chofer));
+                    System.out.println("No tiene vehículos agregados");
                 System.out.println("El chofer es: "+chofer.getUsuario().getNombres()+" "+chofer.getUsuario().getApellidos());
             } else {
                 System.out.println("Faces Does not match");
@@ -67,6 +74,34 @@ public class DispositivoServiceImplement implements DispositivoService {
         } catch (AmazonRekognitionException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private Boolean sendChofer(Chofer chofer){
+        try{
+            if (chofer.getVehiculo()==null|| chofer.getVehiculo().isEmpty())
+                return false;
+            JSONObject datos = new JSONObject();
+            datos.put("nombres", chofer.getUsuario().getNombres());
+            datos.put("apellidos", chofer.getUsuario().getApellidos());
+            datos.put("tipo_licencia", chofer.getLicencia());
+            datos.put("ci", chofer.getUsuario().getCedula());
+            List<JSONObject> vehiculos = new ArrayList<>();
+            for (Vehiculo car:chofer.getVehiculo()) {
+                JSONObject carro = new JSONObject();
+                carro.put("modelo", car.getModelo());
+                carro.put("marca", car.getMarca());
+                carro.put("placa", car.getPlaca());
+                carro.put("color", car.getColor());
+                vehiculos.add(carro);
+            }
+            datos.put("vehiculos", vehiculos);
+            socketClient.sendMessage(datos.toJSONString(),"a");
+            return true;
+        }
+        catch (Exception e){
+            System.err.println(e.getMessage());
+            return  false;
         }
     }
 }

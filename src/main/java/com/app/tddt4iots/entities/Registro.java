@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 
 @Entity
 @Table(name = "registro")
@@ -18,7 +20,7 @@ public class Registro {
     private Long id;
 
     @Column(name = "fecha", nullable = false, unique = false)
-    private String fecha;
+    private Date fecha;
 
     @Column(name = "observaciones", nullable = true, unique = false)
     private String observaciones;
@@ -64,11 +66,11 @@ public class Registro {
         return "com.app.tddt4iots.entities.Registro[ id=" + id + " ]";
     }
 
-    public String getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(String fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 

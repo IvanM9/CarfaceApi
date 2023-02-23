@@ -6,6 +6,7 @@ import com.app.tddt4iots.dtos.usuariodto.CreateUserDto;
 import com.app.tddt4iots.entities.Usuario;
 import com.app.tddt4iots.enums.Rol;
 import com.app.tddt4iots.service.UsuarioService.UsuarioServiceImplement;
+import com.app.tddt4iots.utils.FilesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -20,6 +21,8 @@ public class CarfaceApplication implements CommandLineRunner {
     UsuarioServiceImplement usuarioServiceImplement;
     @Autowired
     UsuarioDao usuarioDao;
+    @Autowired
+    FilesUtil filesUtil;
 
     @Value("${admin.correo}")
     String correo;
@@ -32,10 +35,9 @@ public class CarfaceApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        
-
         try {
             if (usuarioServiceImplement.getUsuarioByEmail(correo)==null) {
+                filesUtil.deleteColletion("CarFaces");
                 CreateUserDto usuario = new CreateUserDto();
                 usuario.setCorreo(correo);
                 usuario.setClave(clave);

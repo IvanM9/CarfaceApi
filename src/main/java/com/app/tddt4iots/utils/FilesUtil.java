@@ -138,4 +138,19 @@ public class FilesUtil {
             return false;
         }
     }
+
+    public Boolean deleteColletion(String collection){
+        try {
+            DeleteCollectionRequest request = new DeleteCollectionRequest()
+                    .withCollectionId(collection);
+            DeleteCollectionResult deleteCollectionResult = amazonRekognition.deleteCollection(request);
+
+            System.out.println(collection + ": " + deleteCollectionResult.getStatusCode()
+                    .toString());
+            return true;
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            return false;
+        }
+    }
 }
