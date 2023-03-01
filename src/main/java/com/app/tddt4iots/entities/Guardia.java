@@ -2,9 +2,13 @@ package com.app.tddt4iots.entities;
 
 import com.app.tddt4iots.enums.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -21,12 +25,20 @@ public class Guardia {
 
     @Column(name = "estado", nullable = false)
     private Boolean estado;
+    @Column(name = "fecha_incio", nullable = false, unique = false, length = 30)
+    private Date fecha_inicio;
+    @Column(name = "fecha_fin", nullable = false, unique = false, length = 30)
+    private Date fecha_fin;
 
 
     @MapsId
     @OneToOne
     @JsonBackReference
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "guardia", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Registro> registros;
 
 
     @Override

@@ -30,30 +30,34 @@ public class UsuarioServiceImplement implements UsuarioService {
     }
 
     @Override
-    public Optional<Usuario> getUsuarioById(long id) {
+    public JSONObject getUsuarioById(long id) {
+        return getUsuario(repository.findById(id).get());
+    }
 
-        return repository.findById(id);
+    private JSONObject getUsuario(Usuario usuario) {
+        JSONObject object = new JSONObject();
+        object.put("nombre", usuario.getNombres());
+        object.put("apellido", usuario.getApellidos());
+        object.put("ci", usuario.getCedula());
+        object.put("direccion", usuario.getDireccion());
+        object.put("telefono", usuario.getTelefono());
+        object.put("id", usuario.getId());
+        switch (usuario.getRol()) {
+            case CHOFER -> {
+                object.put("chofer", usuario.getChofer());
+            }
+            case GUARDIA -> object.put("guardia", usuario.getGuardia());
+        }
+        return object;
     }
 
     @Override
     public JSONObject getUsuarioByEmail(String correo) {
-        JSONObject object = new JSONObject();
         try {
-            Usuario usuario = repository.findOneByCorreo(correo).orElseThrow();
-            object.put("nombre", usuario.getNombres());
-            object.put("apellido", usuario.getApellidos());
-            object.put("ci", usuario.getCedula());
-            object.put("direccion",usuario.getDireccion());
-            object.put("telefono", usuario.getTelefono());
-            object.put("id", usuario.getId());
-            switch (usuario.getRol()){
-                case CHOFER -> {
-                    object.put("chofer",usuario.getChofer());
-                }
-                case GUARDIA -> object.put("guardia", usuario.getGuardia());
-            }
-            return object;
+            Usuario usuario = repository.findOneByCorreo(correo.toString().toLowerCase()).orElseThrow();
+            return getUsuario(usuario);
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             return null;
         }
     }

@@ -59,7 +59,7 @@ public class JwtTokenService {
             Map<String, Claim> datos =  verifier.verify(token).getClaims();
             JwtDto datosToken = new JwtDto();
             datosToken.setId(datos.get("id").asLong());
-            datosToken.setCorreo(String.valueOf(datos.get("correo")));
+            datosToken.setCorreo(datos.get("correo").asString());
             datosToken.setRol(Rol.valueOf(datos.get("rol").asString()));
             return datosToken;
         } catch (final JWTVerificationException verificationEx) {

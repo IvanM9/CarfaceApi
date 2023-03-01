@@ -14,7 +14,6 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class Registro {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +33,11 @@ public class Registro {
     @JoinColumn
     @JsonBackReference
     private Vehiculo vehiculo;
+
+    @ManyToOne()
+    @JoinColumn
+    @JsonBackReference
+    private Guardia guardia;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -66,43 +70,4 @@ public class Registro {
         return "com.app.tddt4iots.entities.Registro[ id=" + id + " ]";
     }
 
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
-    public Chofer getChofer() {
-        return chofer;
-    }
-
-    public void setChofer(Chofer chofer) {
-        this.chofer = chofer;
-    }
-
-    public Vehiculo getVehiculo() {
-        return vehiculo;
-    }
-
-    public void setVehiculo(Vehiculo vehiculo) {
-        this.vehiculo = vehiculo;
-    }
-
-    public Tipo getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(Tipo tipo) {
-        this.tipo = tipo;
-    }
 }

@@ -20,7 +20,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/vehiculo")
-@CrossOrigin(origins = "*")
 public class VehiculoApi {
 
     @Autowired
@@ -40,7 +39,7 @@ public class VehiculoApi {
         return ResponseEntity.ok(listVehiculo);
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> insertVehiculo(@RequestBody CreateVehiculoDto vehiculo, @RequestHeader String Authorization) {
         rol.clear();
         rol.add(Rol.CHOFER);

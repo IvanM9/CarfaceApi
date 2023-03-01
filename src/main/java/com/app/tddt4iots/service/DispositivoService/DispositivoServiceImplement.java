@@ -86,9 +86,11 @@ public class DispositivoServiceImplement implements DispositivoService {
             datos.put("apellidos", chofer.getUsuario().getApellidos());
             datos.put("tipo_licencia", chofer.getLicencia());
             datos.put("ci", chofer.getUsuario().getCedula());
+            datos.put("id_chofer", chofer.getUsuario().getId());
             List<JSONObject> vehiculos = new ArrayList<>();
             for (Vehiculo car:chofer.getVehiculo()) {
                 JSONObject carro = new JSONObject();
+                carro.put("id_vehiculo", car.getId());
                 carro.put("modelo", car.getModelo());
                 carro.put("marca", car.getMarca());
                 carro.put("placa", car.getPlaca());

@@ -19,8 +19,6 @@ tiempo real a los guardias encargados del ingreso y salida de los vehículos.
       - SPRING.JPA.PROPERTIES.HIBERNATE.DIALECT
       - SPRING.JPA.HIBERNATE.DDL-AUTO
       - JWT.SECRET
-      - SPRING.THYMELEAF.PREFIX
-      - SPRING.THYMELEAF.SUFFIX
       - spring.servlet.multipart.max-file-size
       - spring.servlet.multipart.max-request-size
       - admin.correo
@@ -31,6 +29,7 @@ tiempo real a los guardias encargados del ingreso y salida de los vehículos.
       - aws.s3.bucket
       - aws.s3.bucket_rekognition
       - aws.s3.bucket_2
+      - socket-server.port
 
 ### Docker
 #### Modo producción

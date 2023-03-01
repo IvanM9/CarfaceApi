@@ -28,7 +28,7 @@ public class Vehiculo {
     @Enumerated(EnumType.STRING)
     private TipoVehiculo tipoVehiculo;
 
-    @Column(name = "placa", nullable = false, unique = false, length = 15)
+    @Column(name = "placa", nullable = false, unique = true, length = 15)
     private String placa;
 
     @Column(name = "marca", nullable = false, unique = false, length = 30)
@@ -50,11 +50,11 @@ public class Vehiculo {
 
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Fotovehiculo> fotovehiculo;
+    private List<Fotovehiculo> fotosvehiculos;
 
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Registro> registro;
+    private List<Registro> registros;
 
     @Column(name = "fechacreacion", nullable = false, unique = false, updatable = false)
     private Date fechacreacion;

@@ -23,7 +23,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/guardia")
-@CrossOrigin(origins = "*")
 
 public class GuardiaApi {
 
@@ -43,14 +42,18 @@ public class GuardiaApi {
         return ResponseEntity.ok(listGuardia);
     }
 
+    @GetMapping("{placa}")
+    public ResponseEntity<?> escanearPlaca(@PathVariable("placa") String placa) {
+        JSONObject datos = servicio.escanearPlaca(placa);
+        return new ResponseEntity<>(datos, datos != null ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+
     @PostMapping
     public ResponseEntity<?> insertGuardia(@RequestBody CreateGuardiaDto guardia, @RequestHeader String Authorization) {
         rol.clear();
         rol.add(Rol.ADMINISTRADOR);
         if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null) {
-            JSONObject error = new JSONObject();
-            error.put("Mensaje", "No autorizado");
-            return new ResponseEntity<>(error,
+            return new ResponseEntity<>(JSONObject.toString("Mensaje", "No autorizado"),
                     HttpStatus.FORBIDDEN);
         }
         Usuario newGuardia = servicio.saveGuardia(guardia);

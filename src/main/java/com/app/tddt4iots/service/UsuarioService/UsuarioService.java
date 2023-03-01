@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface UsuarioService {
     ArrayList<Usuario> getUsuarios();
-    Optional<Usuario> getUsuarioById(long id);
+    JSONObject getUsuarioById(long id);
     JSONObject getUsuarioByEmail(String correo);
 
 

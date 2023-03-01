@@ -122,7 +122,7 @@ public class VehiculoServiceImplement implements VehiculoService{
     @Transactional
     private Boolean addFotosChofer(List<Fotovehiculo> fotos, Vehiculo vehiculo) {
         try {
-            vehiculo.getFotovehiculo().addAll(fotos);
+            vehiculo.getFotosvehiculos().addAll(fotos);
             vehiculoDao.save(vehiculo);
             return true;
         } catch (Exception e) {

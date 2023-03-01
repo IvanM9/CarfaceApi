@@ -28,7 +28,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/chofer")
-@CrossOrigin(origins = "*")
 public class ChoferApi {
 
     @Autowired
@@ -43,7 +42,7 @@ public class ChoferApi {
 
     private ArrayList<Rol> rol = new ArrayList<>();
 
-    @GetMapping
+    @GetMapping("all")
     public ResponseEntity<?> getChoferes(@RequestHeader String Authorization) {
         rol.clear();
         rol.add(Rol.ADMINISTRADOR);
@@ -53,12 +52,17 @@ public class ChoferApi {
         return ResponseEntity.ok(listChofer);
     }
 
-    @GetMapping(value = "{correo}")
-    public ResponseEntity<?> getChofer(@PathVariable("correo") String correo, @RequestHeader String Authorization) {
-        if (jwtTokenService.validateTokenAndGetDatas(Authorization) == null)
+
+
+    @GetMapping
+    public ResponseEntity<?> getChoferById(@RequestHeader String Authorization) {
+        rol.clear();
+        rol.add(Rol.CHOFER);
+        JwtDto chofer = jwtTokenService.validateTokenAndGetDatas(Authorization, rol);
+        if (chofer == null)
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        JSONObject chofer = usuarioServiceImplement.getUsuarioByEmail(correo);
-        return new ResponseEntity<>(chofer, chofer == null || chofer.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+        JSONObject chofer2 = usuarioServiceImplement.getUsuarioByEmail(chofer.getCorreo());
+        return new ResponseEntity<>(chofer2, chofer2 == null || chofer2.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK);
     }
 
     @PostMapping
