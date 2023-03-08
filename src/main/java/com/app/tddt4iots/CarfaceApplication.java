@@ -40,7 +40,8 @@ public class CarfaceApplication implements CommandLineRunner {
     public void run(String... args) {
         try {
             if (usuarioServiceImplement.getUsuarioByEmail(correo) == null) {
-                filesUtil.deleteColletion("CarFaces");
+                if (filesUtil.collections().getCollectionIds().contains("CarFaces"))
+                    filesUtil.deleteColletion("CarFaces");
                 CreateUserDto usuario = new CreateUserDto();
                 usuario.setCorreo(correo);
                 usuario.setClave(clave);

@@ -36,14 +36,26 @@ public class GuardiaApi {
 
     ArrayList rol = new ArrayList<Rol>();
 
-    @GetMapping
-    public ResponseEntity<List<Guardia>> getGuardia() {
-        List<Guardia> listGuardia = guardiaDAO.findAll();
-        return ResponseEntity.ok(listGuardia);
+    @GetMapping("all")
+    public ResponseEntity<?> getGuardias(@RequestHeader String Authorization) {
+        rol.clear();
+        rol.add(Rol.ADMINISTRADOR);
+        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null) {
+            return new ResponseEntity<>(JSONObject.toString("Mensaje", "No autorizado"),
+                    HttpStatus.FORBIDDEN);
+        }
+        List<JSONObject> listGuardia = servicio.getAllGuardias();
+        return new ResponseEntity<>(listGuardia, HttpStatus.OK);
     }
 
     @GetMapping("{placa}")
-    public ResponseEntity<?> escanearPlaca(@PathVariable("placa") String placa) {
+    public ResponseEntity<?> escanearPlaca(@PathVariable("placa") String placa, @RequestHeader String Authorization) {
+        rol.clear();
+        rol.add(Rol.GUARDIA);
+        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null) {
+            return new ResponseEntity<>(JSONObject.toString("Mensaje", "No autorizado"),
+                    HttpStatus.FORBIDDEN);
+        }
         JSONObject datos = servicio.escanearPlaca(placa);
         return new ResponseEntity<>(datos, datos != null ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
@@ -60,20 +72,14 @@ public class GuardiaApi {
         return ResponseEntity.ok(newGuardia);
     }
 
-    @PutMapping
-    public ResponseEntity<Guardia> updateGuardia(@RequestBody Guardia guardia) {
-        Guardia upGuardia = guardiaDAO.save(guardia);
-        if (upGuardia != null) {
-            return ResponseEntity.ok(upGuardia);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @PutMapping("editar/{id}")
+    public ResponseEntity<?> updateGuardia(@RequestBody CreateGuardiaDto guardia, @PathVariable("id") Long id) {
+        return new ResponseEntity<>(servicio.updateGuardia(guardia, id) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping(value = "{id}")
-    public ResponseEntity<Guardia> deletePersons(@PathVariable("id") Long id) {
-        guardiaDAO.deleteById(id);
-        return ResponseEntity.ok(null);
+    @PutMapping(value = "{id}/{estado}")
+    public ResponseEntity<?> updateEstado(@PathVariable("id") Long id, @PathVariable("estado") Boolean estado) {
+        return new ResponseEntity<>(servicio.updateEstado(id, estado) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
 

@@ -62,7 +62,7 @@ public class FilesUtil {
         }
     }
 
-    private ListCollectionsResult collections() {
+    public ListCollectionsResult collections() {
         try {
             System.out.println("Listing collections");
             int limit = 10;

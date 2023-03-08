@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.desktop.ScreenSleepEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class GuardiaServiceImplement implements GuardiaService {
@@ -77,6 +79,55 @@ public class GuardiaServiceImplement implements GuardiaService {
             json.put("modelo_vehiculo", vehiculo.getModelo());
             json.put("color_vehiculo", vehiculo.getColor());
             return json;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<JSONObject> getAllGuardias() {
+        try {
+            List<Usuario> usuarios = usuarioRepository.findByRol(Rol.GUARDIA);
+            List<JSONObject> guardias = new ArrayList<>();
+            for (Usuario usuario : usuarios) {
+                JSONObject guardia = new JSONObject();
+                guardia.put("id", usuario.getId());
+                guardia.put("nombre", usuario.getNombres() + " " + usuario.getApellidos());
+                guardia.put("telefono", usuario.getTelefono());
+                guardia.put("ci", usuario.getCedula());
+                guardia.put("correo", usuario.getCorreo());
+                guardia.put("empresa", usuario.getGuardia().getEmpresa());
+                guardia.put("estado", usuario.getGuardia().getEstado());
+                guardias.add(guardia);
+            }
+            return guardias;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean updateEstado(Long id, Boolean estado) {
+        return guardiaRepository.updateEstadoById(estado, id) == 1;
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateGuardia(CreateGuardiaDto guardiaDto, Long id) {
+        try {
+            Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+            if (usuario.getRol() != Rol.GUARDIA) return null;
+            usuario.setNombres(guardiaDto.getNombre());
+            usuario.setApellidos(guardiaDto.getApellido());
+            usuario.setCedula(guardiaDto.getCi());
+            usuario.getGuardia().setEmpresa(guardiaDto.getCompania());
+            usuario.getGuardia().setFecha_inicio(guardiaDto.getFecha_inicio());
+            usuario.getGuardia().setFecha_fin(guardiaDto.getFecha_fin());
+            guardiaRepository.save(usuario.getGuardia());
+            usuarioRepository.save(usuario);
+            return true;
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return null;

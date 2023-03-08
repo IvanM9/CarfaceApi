@@ -30,11 +30,11 @@ public class SessionService {
     public JSONObject login(String correo, String clave) {
         try {
             Usuario respuesta = usuario.findOneByCorreo(correo).orElseThrow();
-            System.out.println(respuesta);
             if (respuesta == null)
                 return null;
+            if (respuesta.getGuardia() != null && !respuesta.getGuardia().getEstado())
+                return null;
             BCrypt.Result verificacion = BCrypt.verifyer().verify(clave.toCharArray(), respuesta.getClave());
-            System.out.println(verificacion.verified);
             if (!verificacion.verified)
                 return null;
             JwtDto datosToken = new JwtDto();

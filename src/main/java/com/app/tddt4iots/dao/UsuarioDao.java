@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UsuarioDao extends JpaRepository<Usuario, Long>, CrudRepository<Usuario, Long> {
+    List<Usuario> findByRol(Rol rol);
     @Query("select new com.app.tddt4iots.dtos.choferdto.GetChoferDto(u.id,u.nombres,u.apellidos, u.cedula, u.correo,u.telefono,u.direccion,u.fechacreacion,u.fechamodificacion, c.licencia)" +
             " from Usuario u inner join Chofer c where u.rol = ?1")
     List<GetChoferDto> queryByRol(Rol rol);
