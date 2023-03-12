@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
-public class VehiculoServiceImplement implements VehiculoService{
+public class VehiculoServiceImplement implements VehiculoService {
 
     @Autowired
     VehiculoDao vehiculoDao;
@@ -64,36 +64,41 @@ public class VehiculoServiceImplement implements VehiculoService{
             chofer.getVehiculo().add(vehiculo1);
             choferDao.save(chofer);
             return Optional.of(vehiculo1);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
             return Optional.empty();
         }
     }
-	@Override
-	public Optional<Vehiculo> updateVehiculo(Long id, CreateVehiculoDto vehiculo) {
-		try{
+
+    @Override
+    public Optional<Vehiculo> updateVehiculo(Long id, CreateVehiculoDto vehiculo, Long id_chofer) {
+        try {
             Vehiculo vehiculo1 = vehiculoDao.findById(id).orElseThrow();
-                vehiculo1.setPlaca(vehiculo.getPlaca());
-                vehiculo1.setMarca(vehiculo.getMarca());
-                vehiculo1.setModelo(vehiculo.getModelo());
-                vehiculo1.setColor(vehiculo.getColor());
-                vehiculo1.setAnio(vehiculo.getAño());
-                return Optional.of(vehiculo1);
+            if (vehiculo1.getChofer().getUsuario().getId() != id_chofer)
+                return Optional.empty();
+            vehiculo1.setPlaca(vehiculo.getPlaca());
+            vehiculo1.setMarca(vehiculo.getMarca());
+            vehiculo1.setModelo(vehiculo.getModelo());
+            vehiculo1.setColor(vehiculo.getColor());
+            vehiculo1.setAnio(vehiculo.getAño());
+            vehiculo1.setFechamodificacion(new Timestamp(new Date().getTime()));
+
+            return Optional.of(vehiculoDao.save(vehiculo1));
+        } catch (Exception e) {
+            return Optional.empty();
         }
-        catch(Exception e){
-		return Optional.empty();
-        }
-	}
-	@Override
-	public Boolean uploadPhoto(MultipartFile[] files, Long id_chofer, Long id_vehiculo) {
+    }
+
+    @Override
+    public Boolean uploadPhoto(MultipartFile[] files, Long id_chofer, Long id_vehiculo) {
         Vehiculo vehiculo = vehiculoDao.findById(id_vehiculo).orElseThrow();
-        if(!vehiculo.getChofer().getUsuario().getId().equals(id_chofer))
+        if (!vehiculo.getChofer().getUsuario().getId().equals(id_chofer))
             return false;
         List<Fotovehiculo> fotos = new ArrayList<>();
         AtomicReference<Boolean> success = new AtomicReference<>(false);
-        Arrays.asList(files).stream().forEach(file->{
+        Arrays.asList(files).stream().forEach(file -> {
             try {
-                PutObjectRequest request =  filesUtil.uploadFile(file, bucketName, null);
+                PutObjectRequest request = filesUtil.uploadFile(file, bucketName, null);
                 fotos.add(newFotoVehiculo(file.getOriginalFilename(), request.getKey(), vehiculo));
                 success.set(true);
             } catch (Exception e) {
@@ -101,10 +106,10 @@ public class VehiculoServiceImplement implements VehiculoService{
                 success.set(false);
             }
         });
-        if(!fotos.isEmpty())
+        if (!fotos.isEmpty())
             addFotosChofer(fotos, vehiculo);
-		return success.get();
-	}
+        return success.get();
+    }
 
     @Transactional
     private Fotovehiculo newFotoVehiculo(String nombre, String url, Vehiculo vehiculo) {

@@ -43,7 +43,7 @@ public class Vehiculo {
     @Column(name = "anio", nullable = true, unique = false, length = 30)
     private String anio;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "chofer_id")
     @JsonBackReference
     private Chofer chofer;

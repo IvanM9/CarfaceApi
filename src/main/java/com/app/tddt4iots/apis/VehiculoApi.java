@@ -44,25 +44,28 @@ public class VehiculoApi {
         rol.clear();
         rol.add(Rol.CHOFER);
         JwtDto user = jwtTokenService.validateTokenAndGetDatas(Authorization, rol);
-        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null) {
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         Optional<Vehiculo> vehiculo1 = vehiculoServiceImplement.addVehiculo(user.getId(), vehiculo);
-        return new ResponseEntity<>(vehiculo1.get(), vehiculo1.isEmpty() ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
+        return new ResponseEntity<>(vehiculo1, vehiculo1.isEmpty() ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<Vehiculo> updateVehiculo(@RequestBody Vehiculo vehiculo) {
-        Vehiculo upVehiculo = vehiculoDAO.save(vehiculo);
-        if (upVehiculo != null) {
-            return ResponseEntity.ok(upVehiculo);
-        } else {
-            return ResponseEntity.notFound().build();
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateVehiculo(@RequestBody CreateVehiculoDto vehiculo, @PathVariable("id") Long id, @RequestHeader String Authorization) {
+        rol.clear();
+        rol.add(Rol.CHOFER);
+        rol.add(Rol.ADMINISTRADOR);
+        JwtDto usuario = jwtTokenService.validateTokenAndGetDatas(Authorization, rol);
+        if (usuario == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        Optional<Vehiculo> vehiculo1 = vehiculoServiceImplement.updateVehiculo(id, vehiculo, usuario.getRol() == Rol.CHOFER ? usuario.getId() : null);
+        return new ResponseEntity<>(vehiculo1, !vehiculo1.isEmpty() ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity<Vehiculo> deletePersons(@PathVariable("id") Long id) {
+    public ResponseEntity<Vehiculo> deleteVehiculo(@PathVariable("id") Long id) {
         vehiculoDAO.deleteById(id);
         return ResponseEntity.ok(null);
     }

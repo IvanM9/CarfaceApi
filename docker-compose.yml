@@ -29,8 +29,8 @@ services:
       - JWT.SECRET=Carface_AppDist@2023
       - spring.servlet.multipart.max-file-size=5MB
       - spring.servlet.multipart.max-request-size=50MB
-      - admin.correo=carfaceadmin@admin.com
-      - admin.clave=2023@Iot_CarFace
+      - admin.correo=admin@admin.com
+      - admin.clave=12345
       - aws.access_key_id=AKIAXUUN5CKLUUNQFQLC
       - aws.secret_access_key=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
       - aws.s3.region=us-east-1
@@ -61,8 +61,8 @@ services:
         - JWT.SECRET=Carface_AppDist@2023
         - spring.servlet.multipart.max-file-size=5MB
         - spring.servlet.multipart.max-request-size=50MB
-        - admin.correo=carfaceadmin@admin.com
-        - admin.clave=2023@Iot_CarFace
+        - admin.correo=admin@admin.com
+        - admin.clave=123456
         - aws.access_key_id=AKIAXUUN5CKLUUNQFQLC
         - aws.secret_access_key=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
         - aws.s3.region=us-east-1

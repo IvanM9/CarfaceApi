@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface VehiculoService {
     Optional<Vehiculo> addVehiculo(Long id_chofer, CreateVehiculoDto vehiculo);
 
-    Optional<Vehiculo> updateVehiculo(Long id, CreateVehiculoDto vehiculo);
+    Optional<Vehiculo> updateVehiculo(Long id, CreateVehiculoDto vehiculo, Long id_chofer);
     Boolean uploadPhoto(MultipartFile[] files, Long id_chofer, Long id_vehiculo);
 
 }
