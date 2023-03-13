@@ -34,7 +34,7 @@ public class AdminApi {
         return new ResponseEntity<>(usuario, usuario != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
     @GetMapping("/usuario/email{correo}")
-    public ResponseEntity<?> getChofer(@RequestParam("correo") String correo, @RequestHeader String Authorization) {
+    public ResponseEntity<?> getUserEmail(@RequestParam("correo") String correo, @RequestHeader String Authorization) {
         if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         JSONObject chofer = usuarioServiceImplement.getUsuarioByEmail(correo);

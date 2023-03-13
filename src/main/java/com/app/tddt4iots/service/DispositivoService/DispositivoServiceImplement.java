@@ -1,5 +1,6 @@
 package com.app.tddt4iots.service.DispositivoService;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.model.*;
 import com.amazonaws.services.rekognition.model.Image;
@@ -7,8 +8,13 @@ import com.amazonaws.services.rekognition.model.CompareFacesMatch;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.app.tddt4iots.apis.GuardiaApi;
 import com.app.tddt4iots.dao.ChoferDao;
+import com.app.tddt4iots.dao.UsuarioDao;
+import com.app.tddt4iots.dtos.dispositivodto.CreateDispositivoDto;
+import com.app.tddt4iots.dtos.usuariodto.CreateUserDto;
 import com.app.tddt4iots.entities.Chofer;
+import com.app.tddt4iots.entities.Usuario;
 import com.app.tddt4iots.entities.Vehiculo;
+import com.app.tddt4iots.enums.Rol;
 import com.app.tddt4iots.service.ChoferService.ChoferService;
 import com.app.tddt4iots.service.ChoferService.ChoferServiceImplement;
 import com.app.tddt4iots.utils.FilesUtil;
@@ -22,7 +28,9 @@ import software.amazon.awssdk.core.SdkBytes;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,6 +48,8 @@ public class DispositivoServiceImplement implements DispositivoService {
     GuardiaApi guardiaApi;
     @Value("${aws.s3.bucket}")
     private String bucket;
+    @Autowired
+    private UsuarioDao usuarioDao;
 
     @Override
     public Boolean compareFace(MultipartFile file) {
@@ -62,9 +72,9 @@ public class DispositivoServiceImplement implements DispositivoService {
                 String archivo = lists.get(0).getFace().getExternalImageId();
                 match = true;
                 Chofer chofer = choferService.findById(Long.valueOf(archivo.substring(0, archivo.indexOf("_")))).get();
-                if (!sendChofer(chofer));
-                    System.out.println("No tiene vehículos agregados");
-                System.out.println("El chofer es: "+chofer.getUsuario().getNombres()+" "+chofer.getUsuario().getApellidos());
+                if (!sendChofer(chofer)) ;
+                System.out.println("No tiene vehículos agregados");
+                System.out.println("El chofer es: " + chofer.getUsuario().getNombres() + " " + chofer.getUsuario().getApellidos());
             } else {
                 System.out.println("Faces Does not match");
                 match = false;
@@ -77,9 +87,79 @@ public class DispositivoServiceImplement implements DispositivoService {
         }
     }
 
-    private Boolean sendChofer(Chofer chofer){
-        try{
-            if (chofer.getVehiculo()==null|| chofer.getVehiculo().isEmpty())
+    @Override
+    public Usuario addDispositivo(CreateDispositivoDto dispositivo) {
+        try {
+            Usuario usuario = new Usuario();
+            usuario.setRol(Rol.DISPOSITIVO);
+            return saveDispositivo(dispositivo, usuario);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean deleteDispositivo(Long id) {
+        try {
+            Usuario dispositivo = usuarioDao.findById(id).orElseThrow();
+            if (dispositivo.getRol() != Rol.DISPOSITIVO)
+                return false;
+            usuarioDao.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean updateDispositivo(CreateDispositivoDto dispositivoDto, Long id) {
+        try {
+            Usuario dispositivo = usuarioDao.findById(id).orElseThrow();
+            if (dispositivo.getRol() != Rol.DISPOSITIVO)
+                return false;
+            saveDispositivo(dispositivoDto, dispositivo);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<JSONObject> getAllDipositivos() {
+        List<Usuario> lista = usuarioDao.findByRol(Rol.DISPOSITIVO);
+        List<JSONObject> dispositivos = new ArrayList<>();
+        for (Usuario dispositivo : lista) {
+            JSONObject object = new JSONObject();
+            object.put("id", dispositivo.getId());
+            object.put("nombre", dispositivo.getNombres());
+            object.put("correo", dispositivo.getCorreo());
+            object.put("ubicacion", dispositivo.getDireccion());
+            object.put("codigo", dispositivo.getCedula());
+            object.put("fecha_creacion", dispositivo.getFechacreacion());
+            object.put("fecha_modificacion", dispositivo.getFechamodificacion());
+            dispositivos.add(object);
+        }
+        return dispositivos;
+    }
+
+    private Usuario saveDispositivo(CreateDispositivoDto dispositivo, Usuario usuario) {
+        usuario.setCedula(dispositivo.getCodigo());
+        usuario.setNombres(dispositivo.getNombre());
+        usuario.setApellidos(dispositivo.getNombre());
+        usuario.setDireccion(dispositivo.getUbicacion());
+        if (dispositivo.getClave() != null || !dispositivo.getClave().isEmpty())
+            usuario.setClave(BCrypt.withDefaults().hashToString(12, dispositivo.getClave().toCharArray()));
+        usuario.setCorreo(dispositivo.getCodigo() + "@carface.com");
+        Timestamp timestamp = new Timestamp(new Date().getTime());
+        usuario.setFechacreacion(timestamp);
+        usuario.setFechamodificacion(timestamp);
+        return usuarioDao.save(usuario);
+    }
+
+    private Boolean sendChofer(Chofer chofer) {
+        try {
+            if (chofer.getVehiculo() == null || chofer.getVehiculo().isEmpty())
                 return false;
             JSONObject datos = new JSONObject();
             datos.put("nombres", chofer.getUsuario().getNombres());
@@ -88,7 +168,7 @@ public class DispositivoServiceImplement implements DispositivoService {
             datos.put("ci", chofer.getUsuario().getCedula());
             datos.put("id_chofer", chofer.getUsuario().getId());
             List<JSONObject> vehiculos = new ArrayList<>();
-            for (Vehiculo car:chofer.getVehiculo()) {
+            for (Vehiculo car : chofer.getVehiculo()) {
                 JSONObject carro = new JSONObject();
                 carro.put("id_vehiculo", car.getId());
                 carro.put("modelo", car.getModelo());
@@ -98,12 +178,11 @@ public class DispositivoServiceImplement implements DispositivoService {
                 vehiculos.add(carro);
             }
             datos.put("vehiculos", vehiculos);
-            socketClient.sendMessage(datos.toJSONString(),"a");
+            socketClient.sendMessage(datos.toJSONString(), "a");
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.err.println(e.getMessage());
-            return  false;
+            return false;
         }
     }
 }
