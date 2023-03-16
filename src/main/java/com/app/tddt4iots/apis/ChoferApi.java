@@ -1,8 +1,6 @@
 package com.app.tddt4iots.apis;
 
-import com.app.tddt4iots.dao.UsuarioDao;
 import com.app.tddt4iots.dtos.choferdto.CreateChoferDto;
-import com.app.tddt4iots.dtos.choferdto.GetChoferDto;
 import com.app.tddt4iots.dtos.choferdto.PutChoferDto;
 import com.app.tddt4iots.dtos.usuariodto.JwtDto;
 import com.app.tddt4iots.entities.Chofer;
@@ -13,7 +11,6 @@ import com.app.tddt4iots.security.JwtTokenService;
 import com.app.tddt4iots.service.ChoferService.ChoferServiceImplement;
 
 import com.app.tddt4iots.service.UsuarioService.UsuarioServiceImplement;
-import jakarta.servlet.annotation.HttpConstraint;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/chofer")
@@ -48,10 +44,9 @@ public class ChoferApi {
         rol.add(Rol.ADMINISTRADOR);
         if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
             return new ResponseEntity<>("Usuario no autorizado", HttpStatus.FORBIDDEN);
-        List<GetChoferDto> listChofer = servicio.getChoferes();
-        return ResponseEntity.ok(listChofer);
+        List<JSONObject> listChofer = servicio.getChoferes();
+        return new ResponseEntity<>(listChofer, listChofer != null ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
-
 
 
     @GetMapping
@@ -83,14 +78,15 @@ public class ChoferApi {
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity<Chofer> deletePersons(@PathVariable("id") Long id, @RequestHeader String Authorization) {
+    public ResponseEntity<?> deletePersons(@PathVariable("id") Long id, @RequestHeader String Authorization) {
         rol.clear();
         rol.add(Rol.ADMINISTRADOR);
         rol.add(Rol.CHOFER);
-        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null)
+        JwtDto usuario = jwtTokenService.validateTokenAndGetDatas(Authorization, rol);
+        if (usuario == null)
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        choferDAO.deleteById(id);
-        return ResponseEntity.ok(null);
+        Boolean eliminado = servicio.deleteChofer(usuario.getRol() == Rol.CHOFER ? usuario.getId() : id);
+        return new ResponseEntity<>("Eliminado: " + eliminado, eliminado ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/fotos")

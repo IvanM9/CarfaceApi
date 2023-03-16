@@ -2,12 +2,10 @@ package com.app.tddt4iots.service.ChoferService;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import com.app.tddt4iots.dao.ChoferDao;
 import com.app.tddt4iots.dao.FotochoferDao;
 import com.app.tddt4iots.dao.UsuarioDao;
 import com.app.tddt4iots.dtos.choferdto.CreateChoferDto;
-import com.app.tddt4iots.dtos.choferdto.GetChoferDto;
 import com.app.tddt4iots.dtos.choferdto.PutChoferDto;
 import com.app.tddt4iots.dtos.usuariodto.CreateUserDto;
 import com.app.tddt4iots.entities.Chofer;
@@ -17,18 +15,13 @@ import com.app.tddt4iots.enums.Rol;
 import com.app.tddt4iots.service.UsuarioService.UsuarioServiceImplement;
 import com.app.tddt4iots.utils.FilesUtil;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -87,13 +80,37 @@ public class ChoferServiceImplement implements ChoferService {
 
     @Override
     public Boolean deleteChofer(Long id) {
-        return null;
+        try {
+            if (usuario.findById(id).orElseThrow().getRol() != Rol.CHOFER)
+                return false;
+            usuario.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public List<GetChoferDto> getChoferes() {
-        return usuario.queryByRol(Rol.CHOFER);
-
+    public List<JSONObject> getChoferes() {
+        try {
+            List<Usuario> choferes = usuario.findByRol(Rol.CHOFER);
+            List<JSONObject> datos = new ArrayList<>();
+            for (Usuario chofer : choferes) {
+                JSONObject usuario = new JSONObject();
+                usuario.put("id", chofer.getId());
+                usuario.put("telefono", chofer.getTelefono());
+                usuario.put("ci", chofer.getCedula());
+                usuario.put("tipolicencia", chofer.getChofer().getLicencia());
+                usuario.put("correo", chofer.getCorreo());
+                usuario.put("nombres", chofer.getNombres());
+                usuario.put("apellidos", chofer.getApellidos());
+                datos.add(usuario);
+            }
+            return datos;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -104,7 +121,7 @@ public class ChoferServiceImplement implements ChoferService {
             AtomicReference<Boolean> success = new AtomicReference<>(false);
             Arrays.asList(files).stream().forEach(file -> {
                 try {
-                    PutObjectRequest request =  filesUtil.uploadFile(file, bucketName, usuario1.getId());
+                    PutObjectRequest request = filesUtil.uploadFile(file, bucketName, usuario1.getId());
                     filesUtil.indexFace(bucketName, request.getKey());
                     fotos.add(newFotoChofer(file.getOriginalFilename(), request.getKey(), usuario1.getChofer()));
                     success.set(true);

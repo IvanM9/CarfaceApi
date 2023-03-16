@@ -111,6 +111,19 @@ public class VehiculoServiceImplement implements VehiculoService {
         return success.get();
     }
 
+    @Override
+    public Boolean deleteVehiculo(Long id_vehiculo, Long id_chofer) {
+        try {
+            Vehiculo vehiculo = vehiculoDao.findById(id_vehiculo).orElseThrow();
+            if (vehiculo.getChofer().getUsuario().getId() != id_chofer)
+                return false;
+            vehiculoDao.delete(vehiculo);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Transactional
     private Fotovehiculo newFotoVehiculo(String nombre, String url, Vehiculo vehiculo) {
         Fotovehiculo fotovehiculo = new Fotovehiculo();

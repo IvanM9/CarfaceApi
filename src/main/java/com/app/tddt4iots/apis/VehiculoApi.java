@@ -64,16 +64,17 @@ public class VehiculoApi {
         return new ResponseEntity<>(vehiculo1, !vehiculo1.isEmpty() ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping(value = "{id}")
-    public ResponseEntity<?> deleteVehiculo(@PathVariable("id") Long id, @RequestHeader String Authorization) {
+    @DeleteMapping("{id_vehiculo}/{id_chofer}")
+    public ResponseEntity<?> deleteVehiculo(@PathVariable("id_vehiculo") Long vehiculo, @PathVariable("id_chofer") Long chofer, @RequestHeader String Authorization) {
         rol.clear();
         rol.add(Rol.CHOFER);
         rol.add(Rol.ADMINISTRADOR);
-        if (jwtTokenService.validateTokenAndGetDatas(Authorization, rol) == null) {
+        JwtDto usuario = jwtTokenService.validateTokenAndGetDatas(Authorization, rol);
+        if (usuario == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        vehiculoDAO.deleteById(id);
-        return ResponseEntity.ok("Eliminado");
+        Boolean eliminado = vehiculoServiceImplement.deleteVehiculo(vehiculo, usuario.getRol() == Rol.CHOFER ? usuario.getId() : chofer);
+        return new ResponseEntity<>("Eliminado: " + eliminado, eliminado ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/fotos/{id_vehiculo}")
