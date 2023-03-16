@@ -52,7 +52,7 @@ public class Vehiculo {
     @JsonManagedReference
     private List<Fotovehiculo> fotosvehiculos;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JsonManagedReference
     private List<Registro> registros;
 

@@ -36,7 +36,7 @@ public class Guardia {
     @JsonBackReference
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "guardia", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "guardia", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JsonManagedReference
     private List<Registro> registros;
 

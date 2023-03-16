@@ -34,7 +34,7 @@ public class Fotovehiculo {
     @Column(name = "fechamodificacion", nullable = false, unique = false, updatable = false)
     private Date fechamodificacion;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private Vehiculo vehiculo;
 

@@ -24,17 +24,17 @@ public class Registro {
     @Column(name = "observaciones", nullable = true, unique = false)
     private String observaciones;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn
     @JsonBackReference
     private Chofer chofer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn
     @JsonBackReference
     private Vehiculo vehiculo;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn
     @JsonBackReference
     private Guardia guardia;

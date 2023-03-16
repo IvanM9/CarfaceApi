@@ -38,7 +38,7 @@ public class Chofer {
     @JsonManagedReference
     private List<Fotochofer> fotochofer;
 
-    @OneToMany(mappedBy = "chofer",  cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chofer",  cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JsonManagedReference
     private List<Registro> registro;
 

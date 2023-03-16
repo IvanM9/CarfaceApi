@@ -26,7 +26,7 @@ public class Fotochofer {
     @Column(name = "descripcion", nullable = true, unique = false)
     private String descripcion;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "foto_chofer_id")
     @JsonBackReference
     private Chofer chofer;
