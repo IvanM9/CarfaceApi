@@ -93,7 +93,8 @@ public class GuardiaServiceImplement implements GuardiaService {
             for (Usuario usuario : usuarios) {
                 JSONObject guardia = new JSONObject();
                 guardia.put("id", usuario.getId());
-                guardia.put("nombre", usuario.getNombres() + " " + usuario.getApellidos());
+                guardia.put("nombres", usuario.getNombres());
+                guardia.put("apellidos", usuario.getApellidos());
                 guardia.put("telefono", usuario.getTelefono());
                 guardia.put("ci", usuario.getCedula());
                 guardia.put("correo", usuario.getCorreo());
